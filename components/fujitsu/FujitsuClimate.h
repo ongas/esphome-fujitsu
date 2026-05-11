@@ -18,7 +18,16 @@ class FujitsuClimate : public climate::Climate, public Component {
     SemaphoreHandle_t lock;
     bool pendingUpdate;
 
+    void set_rx_pin(int pin) { this->rx_pin_ = pin; }
+    void set_tx_pin(int pin) { this->tx_pin_ = pin; }
+    void set_en_pin(int pin) { this->en_pin_ = pin; }
+    void set_nrst_pin(int pin) { this->nrst_pin_ = pin; }
+
    protected:
+    int rx_pin_ = 16;
+    int tx_pin_ = 17;
+    int en_pin_ = -1;
+    int nrst_pin_ = -1;
 
     void updateState();
     optional<climate::ClimateMode> fujiToEspMode(FujiMode fujiMode);

@@ -2,7 +2,7 @@ esphome:
   name: fujitsu
 
 esp32:
-  board: nodemcu-32s
+  board: dfrobot_firebeetle2_esp32e
   framework:
     type: arduino
 
@@ -35,3 +35,7 @@ captive_portal:
 climate:
   - platform: fujitsu
     name: "Fujitsu"
+    rx_pin: 16
+    tx_pin: 17
+    en_pin: 25
+    nrst_pin: 26

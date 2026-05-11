@@ -30,7 +30,20 @@ void FujitsuClimate::setup() {
     this->pendingUpdate = false;
     memcpy(&(this->sharedState), this->heatPump.getCurrentState(),
            sizeof(FujiFrame));
-    this->heatPump.connect(&Serial2, true, 16, 17);
+
+    // Drive LIN transceiver EN and NRST pins HIGH if configured
+    if (this->en_pin_ != -1) {
+        pinMode(this->en_pin_, OUTPUT);
+        digitalWrite(this->en_pin_, HIGH);
+        ESP_LOGD("fuji", "EN pin %d set HIGH", this->en_pin_);
+    }
+    if (this->nrst_pin_ != -1) {
+        pinMode(this->nrst_pin_, OUTPUT);
+        digitalWrite(this->nrst_pin_, HIGH);
+        ESP_LOGD("fuji", "NRST pin %d set HIGH", this->nrst_pin_);
+    }
+
+    this->heatPump.connect(&Serial2, true, this->rx_pin_, this->tx_pin_);
     ESP_LOGD("fuji", "starting task");
     xTaskCreatePinnedToCore(serialTask, "FujiTask", 10000, (void *)this,
                             configMAX_PRIORITIES - 1, &(this->taskHandle), 1);
