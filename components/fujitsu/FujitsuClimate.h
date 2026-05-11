@@ -1,6 +1,7 @@
 #pragma once
 #include "FujiHeatPump.h"
-#include "esphome.h"
+#include "esphome/components/climate/climate.h"
+#include "esphome/core/component.h"
 
 namespace esphome {
 namespace fujitsu {

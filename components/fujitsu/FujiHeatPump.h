@@ -1,8 +1,10 @@
 /* This file is based on unreality's FujiHeatPump project */
 #pragma once
 
-#include "esphome.h"
-#include "HardwareSerial.h"
+#include <Arduino.h>
+
+namespace esphome {
+namespace fujitsu {
 
 const byte kModeIndex = 3;
 const byte kModeMask = 0b00001110;
@@ -164,3 +166,6 @@ const byte kFanModeUpdateMask = 0b00010000;
 const byte kEconomyModeUpdateMask = 0b00001000;
 const byte kSwingModeUpdateMask = 0b00000100;
 const byte kSwingStepUpdateMask = 0b00000010;
+
+}  // namespace fujitsu
+}  // namespace esphome

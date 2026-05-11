@@ -6,3 +6,5 @@
 main.cpp
 src/esphome/
 src/esphome.h
+.esphome/
+__pycache__/

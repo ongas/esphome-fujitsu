@@ -2,11 +2,10 @@
 
 // #define DEBUG_FUJI
 #include "FujiHeatPump.h"
+#include "esphome/core/log.h"
 
-// The esphome ESP_LOGx macros expand to reference esp_log_printf_, but do so
-// without using its namespace. https://github.com/esphome/issues/issues/3196
-// The workaround is to pull that particular function into this namespace.
-using esphome::esp_log_printf_;
+namespace esphome {
+namespace fujitsu {
 
 FujiFrame FujiHeatPump::decodeFrame()
 {
@@ -479,3 +478,6 @@ void FujiHeatPump::setState(FujiFrame *state)
 }
 
 byte FujiHeatPump::getUpdateFields() { return updateFields; }
+
+}  // namespace fujitsu
+}  // namespace esphome

@@ -1,6 +1,5 @@
 #include "FujitsuClimate.h"
-
-#include "FujiHeatPump.h"
+#include "esphome/core/log.h"
 
 namespace esphome {
 namespace fujitsu {
@@ -31,7 +30,7 @@ void FujitsuClimate::setup() {
     this->pendingUpdate = false;
     memcpy(&(this->sharedState), this->heatPump.getCurrentState(),
            sizeof(FujiFrame));
-    this->heatPump.connect(&Serial2, true);
+    this->heatPump.connect(&Serial2, true, 16, 17);
     ESP_LOGD("fuji", "starting task");
     xTaskCreatePinnedToCore(serialTask, "FujiTask", 10000, (void *)this,
                             configMAX_PRIORITIES - 1, &(this->taskHandle), 1);
@@ -153,7 +152,8 @@ void FujitsuClimate::updateState() {
             fujiToEspFanMode((FujiFanMode)this->sharedState.fanMode);
         if (newFanMode.has_value() && newFanMode.value() != this->fan_mode) {
             ESP_LOGD("fujitsu", "ctrl fan mode %d vs my fan mode %d",
-                     newFanMode.value(), this->fan_mode.value_or(-1));
+                     static_cast<int>(newFanMode.value()),
+                     this->fan_mode.has_value() ? static_cast<int>(this->fan_mode.value()) : -1);
             this->fan_mode = newFanMode.value();
             updated = true;
         }
@@ -255,7 +255,7 @@ void FujitsuClimate::control(const climate::ClimateCall &call) {
 climate::ClimateTraits FujitsuClimate::traits() {
     auto traits = climate::ClimateTraits();
 
-    traits.set_supports_current_temperature(true);
+    traits.add_feature_flags(climate::CLIMATE_SUPPORTS_CURRENT_TEMPERATURE);
     traits.set_supported_modes({
         climate::CLIMATE_MODE_AUTO,
         climate::CLIMATE_MODE_HEAT,
