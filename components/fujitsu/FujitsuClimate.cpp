@@ -11,6 +11,11 @@ void serialTask(void *pvParameters) {
 
     for (;;) {
         if (climate->heatPump.waitForFrame()) {
+            if (climate->debug_) {
+                FujiFrame *state = climate->heatPump.getCurrentState();
+                ESP_LOGI("fuji", "Frame received - onOff: %d, temp: %d, mode: %d, fan: %d", 
+                         state->onOff, state->temperature, state->acMode, state->fanMode);
+            }
             delay(60);
             climate->heatPump.sendPendingFrame();
             climate->pendingUpdate = false;

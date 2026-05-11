@@ -28,9 +28,37 @@ Then run your esphome (tested with esphome version 2022.2.3) compile or upload c
 $ esphome compile fujitsu.yaml
 ```
 
+## Configuration:
+
+### Pins (Required)
+```yaml
+climate:
+  - platform: fujitsu
+    name: "Fujitsu AC"
+    tx_pin: 1      # TX pin for serial communication
+    rx_pin: 3      # RX pin for serial communication
+    en_pin: 25     # Enable pin for TLE8457C transceiver
+    nrst_pin: 26   # Reset pin for TLE8457C transceiver
+```
+
+### Debug Logging (Optional)
+Enable debug logging to see incoming frames from the AC unit:
+```yaml
+climate:
+  - platform: fujitsu
+    name: "Fujitsu AC"
+    tx_pin: 1
+    rx_pin: 3
+    en_pin: 25
+    nrst_pin: 26
+    debug: true    # Enable frame logging: onOff, temperature, mode, fan
+```
+
+When `debug: true`, frame data is logged. When `debug: false` (default), debug logging is disabled for normal operation.
+
 ## Default behaviour:
 
-* The MCP2025 is connected to Serial 2
+* The LIN transceiver (TLE8457C) is connected to Serial 2 (GPIO 1/3)
 * The controller is registered as secondary controller, see `void FujitsuClimate::setup()` in `FujitsuClimate.cpp`
 * My AC works on 1 degree C step, 16-30 degree temperature range etc...
 see `void climate::ClimateTraits FujitsuClimate::traits()` in `FujitsuClimate.cpp` for more details,
