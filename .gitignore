@@ -8,3 +8,4 @@ src/esphome/
 src/esphome.h
 .esphome/
 __pycache__/
+secrets.yaml
