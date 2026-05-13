@@ -47,7 +47,7 @@ class FujitsuClimate : public climate::Climate, public Component {
 class AttemptLoginAction : public Action<> {
  public:
   explicit AttemptLoginAction(FujitsuClimate *climate) : climate_(climate) {}
-  void play(Ts... x) override {
+  void play(const std::string &) override {
     if (this->climate_) {
       this->climate_->attempt_login();
     }
