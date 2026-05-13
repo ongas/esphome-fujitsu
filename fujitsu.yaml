@@ -40,7 +40,7 @@ captive_portal:
 climate:
   - platform: fujitsu
     name: "Fujitsu"
-    tx_pin: 1    # IO1 / D1 / TXD
-    rx_pin: 3    # IO3 / D0 / RXD
+    rx_pin: 13
+    tx_pin: 27
     en_pin: 25
     nrst_pin: 26

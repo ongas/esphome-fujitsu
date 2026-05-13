@@ -1,0 +1,32 @@
+esphome:
+  name: fujitsuacfirebeetle
+  friendly_name: FujitsuACFireBeetle
+
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "rda+ikXM9AQtCW9k+b6iBOMUY614AxQTmwYtUPhgrYU="
+
+ota:
+  - platform: esphome
+    password: "21c90f2e78bf5115c60498f239c0693e"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Fujitsuacfirebeetle"
+    password: "OfSupxFzUcHk"
+
+captive_portal:
+    

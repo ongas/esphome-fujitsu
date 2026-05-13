@@ -17,13 +17,11 @@ class FujitsuClimate : public climate::Climate, public Component {
     FujiFrame sharedState;
     SemaphoreHandle_t lock;
     bool pendingUpdate;
-    bool debug_ = false;
 
     void set_rx_pin(int pin) { this->rx_pin_ = pin; }
     void set_tx_pin(int pin) { this->tx_pin_ = pin; }
     void set_en_pin(int pin) { this->en_pin_ = pin; }
     void set_nrst_pin(int pin) { this->nrst_pin_ = pin; }
-    void set_debug(bool debug) { this->debug_ = debug; }
 
    protected:
     int rx_pin_ = 16;

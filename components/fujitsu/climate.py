@@ -10,7 +10,6 @@ CONF_RX_PIN = "rx_pin"
 CONF_TX_PIN = "tx_pin"
 CONF_EN_PIN = "en_pin"
 CONF_NRST_PIN = "nrst_pin"
-CONF_DEBUG = "debug"
 
 fujitsu_ns = cg.esphome_ns.namespace("fujitsu")
 FujitsuClimate = fujitsu_ns.class_("FujitsuClimate", climate.Climate, cg.Component)
@@ -20,11 +19,10 @@ CONFIG_SCHEMA = (
     .extend(cv.COMPONENT_SCHEMA)
     .extend(
         {
-            cv.Optional(CONF_RX_PIN, default=3): cv.int_,
-            cv.Optional(CONF_TX_PIN, default=1): cv.int_,
+            cv.Optional(CONF_RX_PIN, default=16): cv.int_,
+            cv.Optional(CONF_TX_PIN, default=17): cv.int_,
             cv.Optional(CONF_EN_PIN): cv.int_,
             cv.Optional(CONF_NRST_PIN): cv.int_,
-            cv.Optional(CONF_DEBUG, default=False): cv.boolean,
         }
     )
 )
@@ -41,6 +39,3 @@ async def to_code(config):
         cg.add(var.set_en_pin(config[CONF_EN_PIN]))
     if CONF_NRST_PIN in config:
         cg.add(var.set_nrst_pin(config[CONF_NRST_PIN]))
-    if CONF_DEBUG in config:
-        cg.add(var.set_debug(config[CONF_DEBUG]))
-
