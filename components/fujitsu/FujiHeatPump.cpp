@@ -496,5 +496,32 @@ void FujiHeatPump::setState(FujiFrame *state)
 
 byte FujiHeatPump::getUpdateFields() { return updateFields; }
 
+void FujiHeatPump::attemptSecondaryLogin()
+{
+    if (controllerIsPrimary || isBound())
+    {
+        ESP_LOGW("fuji", "attemptSecondaryLogin: already PRIMARY or already bound");
+        return;
+    }
+    
+    FujiFrame loginFrame;
+    loginFrame.messageDest = controllerAddress;
+    loginFrame.messageSource = static_cast<byte>(FujiAddress::UNIT);
+    loginFrame.messageType = static_cast<byte>(FujiMessageType::STATUS);
+    loginFrame.controllerPresent = 1;
+    loginFrame.loginBit = true;
+    loginFrame.unknownBit = true;
+    loginFrame.writeBit = 0;
+    
+    encodeFrame(loginFrame);
+    for (int i = 0; i < 8; i++)
+    {
+        writeBuf[i] ^= 0xFF;
+    }
+    _serial->write(writeBuf, 8);
+    
+    ESP_LOGW("fuji", "Sent SECONDARY login request (address=%d)", controllerAddress);
+}
+
 }  // namespace fujitsu
 }  // namespace esphome

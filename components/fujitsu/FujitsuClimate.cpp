@@ -226,11 +226,11 @@ void FujitsuClimate::updateState() {
     if (this->status_sensor_ != nullptr) {
         std::string status;
         if (this->heatPump.isBound()) {
-            status = "Connected";
+            status = "Connected (Read-Write)";
         } else if (this->sharedState.controllerPresent) {
-            status = "Passive monitoring";
+            status = "Read-Only Mode";
         } else {
-            status = "No LIN data";
+            status = "No LIN Data";
         }
         if (status != this->last_status_) {
             this->status_sensor_->publish_state(status);

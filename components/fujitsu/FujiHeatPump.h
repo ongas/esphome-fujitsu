@@ -102,6 +102,7 @@ class FujiHeatPump {
     void sendPendingFrame();
     bool isBound();
     bool updatePending();
+    void attemptSecondaryLogin();
 
     void setOnOff(bool o);
     void setTemp(byte t);
