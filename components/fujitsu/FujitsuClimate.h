@@ -3,7 +3,6 @@
 #include "esphome/components/climate/climate.h"
 #include "esphome/components/text_sensor/text_sensor.h"
 #include "esphome/core/component.h"
-#include "esphome/core/automation.h"
 
 namespace esphome {
 namespace fujitsu {
@@ -41,20 +40,6 @@ class FujitsuClimate : public climate::Climate, public Component {
     
     optional<climate::ClimateFanMode> fujiToEspFanMode(FujiFanMode fujiFanMode);
     optional<FujiFanMode> espToFujiFanMode(climate::ClimateFanMode espFanMode);
-};
-
-// Action for fujitsu.attempt_login
-class AttemptLoginAction : public Action<> {
- public:
-  explicit AttemptLoginAction(FujitsuClimate *climate) : climate_(climate) {}
-  void play(const std::string &) override {
-    if (this->climate_) {
-      this->climate_->attempt_login();
-    }
-  }
-
- protected:
-  FujitsuClimate *climate_;
 };
 
 }  // namespace fujitsu

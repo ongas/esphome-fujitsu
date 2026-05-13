@@ -2,7 +2,7 @@ import esphome.codegen as cg
 import esphome.config_validation as cv
 from esphome.components import climate, text_sensor
 from esphome.const import CONF_ID
-from esphome import pins, automation
+from esphome import pins
 
 AUTO_LOAD = ["climate", "text_sensor"]
 
@@ -14,9 +14,6 @@ CONF_STATUS_SENSOR = "status_sensor"
 
 fujitsu_ns = cg.esphome_ns.namespace("fujitsu")
 FujitsuClimate = fujitsu_ns.class_("FujitsuClimate", climate.Climate, cg.Component)
-
-# Action for attempt_login
-AttemptLoginAction = fujitsu_ns.class_("AttemptLoginAction", automation.Action)
 
 CONFIG_SCHEMA = (
     climate.climate_schema(FujitsuClimate)
@@ -50,12 +47,3 @@ async def to_code(config):
     if CONF_STATUS_SENSOR in config:
         sens = await text_sensor.new_text_sensor(config[CONF_STATUS_SENSOR])
         cg.add(var.set_status_sensor(sens))
-
-    # Register attempt_login action for use in automations/services
-    automation.register_action(
-        "fujitsu.attempt_login",
-        AttemptLoginAction,
-        cv.Schema({cv.GenerateID(): cv.use_id(FujitsuClimate)}),
-    )(lambda config: cg.new_Pvariable(AttemptLoginAction, cg.cast(
-        cg.get_variable(config[CONF_ID]), FujitsuClimate
-    )))
