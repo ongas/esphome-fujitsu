@@ -143,6 +143,7 @@ enum class FujiMessageType : byte {
     ERROR = 1,
     LOGIN = 2,
     UNKNOWN = 3,
+    ZONE = 5,
 };
 
 enum class FujiAddress : byte {

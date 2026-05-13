@@ -196,14 +196,12 @@ bool FujiHeatPump::waitForFrame()
         printFrame(readBuf, ff);
 #endif
 
-        // Log all frame types for zone analysis
-        byte frameType = (readBuf[2] & 0b00110000) >> 4;
-        if (frameType != 0)
+        // Log ZONE frames to capture zone controller traffic
+        if (ff.messageType == static_cast<byte>(FujiMessageType::ZONE))
         {
-            ESP_LOGI("fuji", "Frame type=%d src=%d dest=%d: %02X %02X %02X %02X %02X %02X %02X %02X",
-                frameType, ff.messageSource, ff.messageDest,
-                readBuf[0], readBuf[1], readBuf[2], readBuf[3],
-                readBuf[4], readBuf[5], readBuf[6], readBuf[7]);
+            ESP_LOGI("fuji", "ZONE FRAME src=%d dest=%d byte3=%02X byte4=%02X byte5=%02X byte6=%02X byte7=%02X",
+                ff.messageSource, ff.messageDest,
+                readBuf[3], readBuf[4], readBuf[5], readBuf[6], readBuf[7]);
         }
 
         if (ff.messageDest == controllerAddress)
@@ -328,7 +326,7 @@ bool FujiHeatPump::waitForFrame()
                 // the primary will send packet to a secondary controller to see
                 // if it exists
                 ff.messageSource = controllerAddress;
-                ff.messageDest = static_cast<byte>(FujiAddress::SECONDARY);
+                ff.messageDest = static_cast<byte>(FujiAddress::UNIT);
                 ff.loginBit = true;
                 ff.controllerPresent = 1;
                 ff.updateMagic = 0;
