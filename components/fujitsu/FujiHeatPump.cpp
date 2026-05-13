@@ -196,6 +196,16 @@ bool FujiHeatPump::waitForFrame()
         printFrame(readBuf, ff);
 #endif
 
+        // Log all frame types for zone analysis
+        byte frameType = (readBuf[2] & 0b00110000) >> 4;
+        if (frameType != 0)
+        {
+            ESP_LOGI("fuji", "Frame type=%d src=%d dest=%d: %02X %02X %02X %02X %02X %02X %02X %02X",
+                frameType, ff.messageSource, ff.messageDest,
+                readBuf[0], readBuf[1], readBuf[2], readBuf[3],
+                readBuf[4], readBuf[5], readBuf[6], readBuf[7]);
+        }
+
         if (ff.messageDest == controllerAddress)
         {
             lastFrameReceived = millis();
@@ -505,8 +515,8 @@ void FujiHeatPump::attemptSecondaryLogin()
     }
     
     FujiFrame loginFrame;
-    loginFrame.messageDest = controllerAddress;
-    loginFrame.messageSource = static_cast<byte>(FujiAddress::UNIT);
+    loginFrame.messageDest = static_cast<byte>(FujiAddress::UNIT);
+    loginFrame.messageSource = static_cast<byte>(FujiAddress::SECONDARY);
     loginFrame.messageType = static_cast<byte>(FujiMessageType::STATUS);
     loginFrame.controllerPresent = 1;
     loginFrame.loginBit = true;
@@ -520,7 +530,7 @@ void FujiHeatPump::attemptSecondaryLogin()
     }
     _serial->write(writeBuf, 8);
     
-    ESP_LOGW("fuji", "Sent SECONDARY login request (address=%d)", controllerAddress);
+    ESP_LOGW("fuji", "Sent SECONDARY login request (SECONDARY→UNIT with login bit set)");
 }
 
 }  // namespace fujitsu
