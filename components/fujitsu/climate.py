@@ -1,21 +1,22 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
-from esphome.components import climate, text_sensor, button
+from esphome.components import climate, text_sensor
 from esphome.const import CONF_ID
-from esphome import pins
+from esphome import pins, automation
 
-AUTO_LOAD = ["climate", "text_sensor", "button"]
+AUTO_LOAD = ["climate", "text_sensor"]
 
 CONF_RX_PIN = "rx_pin"
 CONF_TX_PIN = "tx_pin"
 CONF_EN_PIN = "en_pin"
 CONF_NRST_PIN = "nrst_pin"
 CONF_STATUS_SENSOR = "status_sensor"
-CONF_ATTEMPT_LOGIN_BUTTON = "attempt_login_button"
 
 fujitsu_ns = cg.esphome_ns.namespace("fujitsu")
 FujitsuClimate = fujitsu_ns.class_("FujitsuClimate", climate.Climate, cg.Component)
-AttemptLoginButton = fujitsu_ns.class_("AttemptLoginButton", button.Button, cg.Component)
+
+# Action for attempt_login
+AttemptLoginAction = fujitsu_ns.class_("AttemptLoginAction", automation.Action)
 
 CONFIG_SCHEMA = (
     climate.climate_schema(FujitsuClimate)
@@ -28,11 +29,6 @@ CONFIG_SCHEMA = (
             cv.Optional(CONF_NRST_PIN): cv.int_,
             cv.Optional(CONF_STATUS_SENSOR): text_sensor.text_sensor_schema(
                 icon="mdi:information-outline",
-                entity_category="diagnostic",
-            ),
-            cv.Optional(CONF_ATTEMPT_LOGIN_BUTTON): button.button_schema(
-                AttemptLoginButton,
-                icon="mdi:login",
                 entity_category="diagnostic",
             ),
         }
@@ -54,8 +50,12 @@ async def to_code(config):
     if CONF_STATUS_SENSOR in config:
         sens = await text_sensor.new_text_sensor(config[CONF_STATUS_SENSOR])
         cg.add(var.set_status_sensor(sens))
-    
-    if CONF_ATTEMPT_LOGIN_BUTTON in config:
-        btn = await button.new_button(config[CONF_ATTEMPT_LOGIN_BUTTON], var)
-        await cg.register_component(btn, config)
-        cg.add(btn.set_parent(var))
+
+    # Register attempt_login action for use in automations/services
+    automation.register_action(
+        "fujitsu.attempt_login",
+        AttemptLoginAction,
+        cv.Schema({cv.GenerateID(): cv.use_id(FujitsuClimate)}),
+    )(lambda config: cg.new_Pvariable(AttemptLoginAction, cg.cast(
+        cg.get_variable(config[CONF_ID]), FujitsuClimate
+    )))
