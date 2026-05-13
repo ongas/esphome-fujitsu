@@ -2,6 +2,7 @@
 #include "FujiHeatPump.h"
 #include "esphome/components/climate/climate.h"
 #include "esphome/components/text_sensor/text_sensor.h"
+#include "esphome/components/button/button.h"
 #include "esphome/core/component.h"
 
 namespace esphome {
@@ -40,6 +41,22 @@ class FujitsuClimate : public climate::Climate, public Component {
     
     optional<climate::ClimateFanMode> fujiToEspFanMode(FujiFanMode fujiFanMode);
     optional<FujiFanMode> espToFujiFanMode(climate::ClimateFanMode espFanMode);
+};
+
+class AttemptLoginButton : public button::Button, public Component {
+ public:
+  AttemptLoginButton(FujitsuClimate *parent) : parent_(parent) {}
+  void set_parent(FujitsuClimate *parent) { this->parent_ = parent; }
+
+ protected:
+  void press_action() override {
+    if (this->parent_) {
+      this->parent_->attempt_login();
+    }
+  }
+
+ private:
+  FujitsuClimate *parent_;
 };
 
 }  // namespace fujitsu

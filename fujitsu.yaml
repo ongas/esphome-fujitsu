@@ -46,3 +46,5 @@ climate:
     nrst_pin: 26
     status_sensor:
       name: "Fujitsu Connection Status"
+    attempt_login_button:
+      name: "Attempt Secondary Login"
