@@ -191,6 +191,11 @@ bool FujiHeatPump::waitForFrame()
 
         ff = decodeFrame();
 
+        // Log ALL frames to diagnose login issues
+        ESP_LOGD("fuji", "FRAME src=%d dst=%d type=%d cP=%d login=%d write=%d onOff=%d temp=%d",
+            ff.messageSource, ff.messageDest, ff.messageType,
+            ff.controllerPresent, ff.loginBit, ff.writeBit, ff.onOff, ff.temperature);
+
 #ifdef DEBUG_FUJI
         ESP_LOGD("fuji", "<-- ");
         printFrame(readBuf, ff);
