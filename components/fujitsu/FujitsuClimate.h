@@ -24,7 +24,10 @@ class FujitsuClimate : public climate::Climate, public Component {
     void set_en_pin(int pin) { this->en_pin_ = pin; }
     void set_nrst_pin(int pin) { this->nrst_pin_ = pin; }
     void set_status_sensor(text_sensor::TextSensor *sensor) { this->status_sensor_ = sensor; }
-    void attempt_login() { this->heatPump.attemptSecondaryLogin(); }
+    void attempt_login() { 
+        ESP_LOGW("fujitsu", "=== MANUAL LOGIN BUTTON PRESSED ===");
+        this->heatPump.attemptSecondaryLogin(); 
+    }
 
    protected:
     int rx_pin_ = 16;

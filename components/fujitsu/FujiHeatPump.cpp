@@ -506,9 +506,12 @@ byte FujiHeatPump::getUpdateFields() { return updateFields; }
 
 void FujiHeatPump::attemptSecondaryLogin()
 {
-    if (controllerIsPrimary || isBound())
+    ESP_LOGW("fuji", "attemptSecondaryLogin called: controllerIsPrimary=%d, isBound=%d", 
+             controllerIsPrimary, isBound());
+    
+    if (controllerIsPrimary)
     {
-        ESP_LOGW("fuji", "attemptSecondaryLogin: already PRIMARY or already bound");
+        ESP_LOGW("fuji", "attemptSecondaryLogin: already PRIMARY, skipping");
         return;
     }
     
