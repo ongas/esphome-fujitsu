@@ -6,11 +6,17 @@ namespace fujitsu {
 
 void serialTask(void *pvParameters) {
     FujitsuClimate *climate = (FujitsuClimate *)pvParameters;
-    ESP_LOGD("fuji", "reached task");
-    ESP_LOGD("fuji", "serialTask started on core %d", xPortGetCoreID());
+    ESP_LOGW("fuji", "reached task");
+    ESP_LOGW("fuji", "serialTask started on core %d", xPortGetCoreID());
+
+    uint32_t frameCount = 0;
+    uint32_t loopCount = 0;
+    uint32_t lastDiag = millis();
 
     for (;;) {
+        loopCount++;
         if (climate->heatPump.waitForFrame()) {
+            frameCount++;
             delay(60);
             climate->heatPump.sendPendingFrame();
             climate->pendingUpdate = false;
@@ -20,11 +26,21 @@ void serialTask(void *pvParameters) {
                    sizeof(FujiFrame));
             xSemaphoreGive(climate->lock);
         }
+
+        // Diagnostic: log every 10 seconds
+        if (millis() - lastDiag > 10000) {
+            FujiFrame *st = climate->heatPump.getCurrentState();
+            ESP_LOGW("fuji", "DIAG: loops=%u frames=%u ctrlTemp=%d temp=%d onOff=%d serial_avail=%d",
+                     loopCount, frameCount,
+                     st->controllerTemp, st->temperature, st->onOff,
+                     Serial2.available());
+            lastDiag = millis();
+        }
     }
 }
 
 void FujitsuClimate::setup() {
-    ESP_LOGD("fuji", "Fuji initialized");
+    ESP_LOGW("fuji", "Fuji initialized - RX:%d TX:%d EN:%d NRST:%d", this->rx_pin_, this->tx_pin_, this->en_pin_, this->nrst_pin_);
     this->lock = xSemaphoreCreateBinary();
     xSemaphoreGive(this->lock);
     this->pendingUpdate = false;
@@ -204,6 +220,22 @@ void FujitsuClimate::updateState() {
     if (updated) {
         ESP_LOGD("fuji", "publishing state");
         this->publish_state();
+    }
+
+    // Update connection status sensor
+    if (this->status_sensor_ != nullptr) {
+        std::string status;
+        if (this->heatPump.isBound()) {
+            status = "Connected";
+        } else if (this->sharedState.controllerPresent) {
+            status = "Passive monitoring";
+        } else {
+            status = "No LIN data";
+        }
+        if (status != this->last_status_) {
+            this->status_sensor_->publish_state(status);
+            this->last_status_ = status;
+        }
     }
 }
 

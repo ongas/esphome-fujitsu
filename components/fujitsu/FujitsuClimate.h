@@ -1,6 +1,7 @@
 #pragma once
 #include "FujiHeatPump.h"
 #include "esphome/components/climate/climate.h"
+#include "esphome/components/text_sensor/text_sensor.h"
 #include "esphome/core/component.h"
 
 namespace esphome {
@@ -22,12 +23,15 @@ class FujitsuClimate : public climate::Climate, public Component {
     void set_tx_pin(int pin) { this->tx_pin_ = pin; }
     void set_en_pin(int pin) { this->en_pin_ = pin; }
     void set_nrst_pin(int pin) { this->nrst_pin_ = pin; }
+    void set_status_sensor(text_sensor::TextSensor *sensor) { this->status_sensor_ = sensor; }
 
    protected:
     int rx_pin_ = 16;
     int tx_pin_ = 17;
     int en_pin_ = -1;
     int nrst_pin_ = -1;
+    text_sensor::TextSensor *status_sensor_{nullptr};
+    std::string last_status_;
 
     void updateState();
     optional<climate::ClimateMode> fujiToEspMode(FujiMode fujiMode);

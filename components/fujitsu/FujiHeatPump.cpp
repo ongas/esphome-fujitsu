@@ -364,6 +364,23 @@ bool FujiHeatPump::waitForFrame()
                 ff.controllerTemp; // we dont have a temp sensor, use the temp
                                    // reading from the secondary controller
         }
+        else if (!controllerIsPrimary &&
+                 ff.messageSource == static_cast<byte>(FujiAddress::PRIMARY) &&
+                 ff.messageDest == static_cast<byte>(FujiAddress::UNIT))
+        {
+            // Passive monitoring: when SECONDARY is not being polled by the
+            // unit, capture state from PRIMARY→UNIT frames visible on the bus.
+            // The PRIMARY's response contains room temp and current AC state.
+            currentState.controllerTemp = ff.controllerTemp;
+            currentState.temperature = ff.temperature;
+            currentState.acMode = ff.acMode;
+            currentState.fanMode = ff.fanMode;
+            currentState.onOff = ff.onOff;
+            currentState.economyMode = ff.economyMode;
+            currentState.swingMode = ff.swingMode;
+            currentState.swingStep = ff.swingStep;
+            currentState.controllerPresent = 1;
+        }
 
         return true;
     }

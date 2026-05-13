@@ -1,15 +1,16 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
-from esphome.components import climate
+from esphome.components import climate, text_sensor
 from esphome.const import CONF_ID
 from esphome import pins
 
-AUTO_LOAD = ["climate"]
+AUTO_LOAD = ["climate", "text_sensor"]
 
 CONF_RX_PIN = "rx_pin"
 CONF_TX_PIN = "tx_pin"
 CONF_EN_PIN = "en_pin"
 CONF_NRST_PIN = "nrst_pin"
+CONF_STATUS_SENSOR = "status_sensor"
 
 fujitsu_ns = cg.esphome_ns.namespace("fujitsu")
 FujitsuClimate = fujitsu_ns.class_("FujitsuClimate", climate.Climate, cg.Component)
@@ -23,6 +24,10 @@ CONFIG_SCHEMA = (
             cv.Optional(CONF_TX_PIN, default=17): cv.int_,
             cv.Optional(CONF_EN_PIN): cv.int_,
             cv.Optional(CONF_NRST_PIN): cv.int_,
+            cv.Optional(CONF_STATUS_SENSOR): text_sensor.text_sensor_schema(
+                icon="mdi:information-outline",
+                entity_category="diagnostic",
+            ),
         }
     )
 )
@@ -39,3 +44,6 @@ async def to_code(config):
         cg.add(var.set_en_pin(config[CONF_EN_PIN]))
     if CONF_NRST_PIN in config:
         cg.add(var.set_nrst_pin(config[CONF_NRST_PIN]))
+    if CONF_STATUS_SENSOR in config:
+        sens = await text_sensor.new_text_sensor(config[CONF_STATUS_SENSOR])
+        cg.add(var.set_status_sensor(sens))

@@ -44,3 +44,5 @@ climate:
     tx_pin: 27
     en_pin: 25
     nrst_pin: 26
+    status_sensor:
+      name: "Fujitsu Connection Status"
