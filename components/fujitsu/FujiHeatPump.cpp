@@ -14,7 +14,7 @@ FujiFrame FujiHeatPump::decodeFrame()
 
     ff.messageSource = readBuf[0];
     ff.messageDest = readBuf[1] & 0b01111111;
-    ff.messageType = (readBuf[2] & 0b00110000) >> 4;
+    ff.messageType = (readBuf[2] & 0b01110000) >> 4;
 
     ff.acError = (readBuf[kErrorIndex] & kErrorMask) >> kErrorOffset;
     ff.temperature =
