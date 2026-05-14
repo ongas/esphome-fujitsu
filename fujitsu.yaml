@@ -47,12 +47,3 @@ climate:
     nrst_pin: 26
     status_sensor:
       name: "Fujitsu Connection Status"
-
-button:
-  - platform: template
-    name: "Attempt Secondary Login"
-    icon: "mdi:login"
-    entity_category: "config"
-    on_press:
-      - lambda: |-
-          id(fujitsu_climate).attempt_login();

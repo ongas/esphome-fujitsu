@@ -93,8 +93,36 @@ class FujiHeatPump {
     void printFrame(byte buf[8], FujiFrame ff);
 
     bool pendingFrame = false;
+    
+    // Auto-login: inject SECONDARY login after seeing bus activity
+    bool autoLoginPending = false;
+    unsigned long autoLoginLastAttempt = 0;
 
    public:
+    unsigned long autoLoginCount = 0;
+    // Track unique frame patterns seen (src|dst|type|cP packed into byte)
+    struct FramePattern { byte src; byte dst; byte type; byte cP; unsigned long count; };
+    FramePattern seenPatterns[16] = {};
+    byte seenPatternCount = 0;
+    
+    // Track which "other" destinations we've already logged
+    byte loggedOtherDests[8] = {0};
+    byte loggedOtherCount = 0;
+
+    // Frame destination counters for diagnostics
+    unsigned long frameDestPrimary = 0;
+    unsigned long frameDestSecondary = 0;
+    unsigned long frameDestOther = 0;
+    
+    // Probe/response tracking (survives until next reboot, visible in DIAG)
+    unsigned long probeReceivedCount = 0;
+    unsigned long probeReceivedMs = 0;
+    unsigned long responseSentCount = 0;
+    unsigned long responseSentMs = 0;
+    
+    // Enable/disable auto-login injection (disabled: unsolicited frames don't work)
+    bool autoLoginEnabled = false;
+
     void connect(HardwareSerial *serial, bool secondary);
     void connect(HardwareSerial *serial, bool secondary, int rxPin, int txPin);
 
@@ -102,7 +130,6 @@ class FujiHeatPump {
     void sendPendingFrame();
     bool isBound();
     bool updatePending();
-    void attemptSecondaryLogin();
 
     void setOnOff(bool o);
     void setTemp(byte t);

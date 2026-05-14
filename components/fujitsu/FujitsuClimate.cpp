@@ -30,17 +30,30 @@ void serialTask(void *pvParameters) {
         // Diagnostic: log every 10 seconds
         if (millis() - lastDiag > 10000) {
             FujiFrame *st = climate->heatPump.getCurrentState();
-            ESP_LOGW("fuji", "DIAG: loops=%u frames=%u ctrlTemp=%d temp=%d onOff=%d serial_avail=%d",
-                     loopCount, frameCount,
-                     st->controllerTemp, st->temperature, st->onOff,
-                     Serial2.available());
+            // Build string of unique frame patterns seen
+            char patterns[256] = "";
+            for (int i = 0; i < climate->heatPump.seenPatternCount; i++) {
+                auto &p = climate->heatPump.seenPatterns[i];
+                char tmp[48];
+                snprintf(tmp, sizeof(tmp), "%s%d>%d:t%d:cP%d(%lu)", 
+                         i > 0 ? " " : "", p.src, p.dst, p.type, p.cP, p.count);
+                strncat(patterns, tmp, sizeof(patterns) - strlen(patterns) - 1);
+            }
+            ESP_LOGW("fuji", "DIAG: frames=%u dst:P=%lu/S=%lu/O=%lu bound=%d probe=%lu@%lums resp=%lu@%lums patterns=[%s]",
+                     frameCount,
+                     climate->heatPump.frameDestPrimary, climate->heatPump.frameDestSecondary, climate->heatPump.frameDestOther,
+                     climate->heatPump.isBound() ? 1 : 0,
+                     climate->heatPump.probeReceivedCount, climate->heatPump.probeReceivedMs,
+                     climate->heatPump.responseSentCount, climate->heatPump.responseSentMs,
+                     patterns);
             lastDiag = millis();
         }
     }
 }
 
 void FujitsuClimate::setup() {
-    ESP_LOGW("fuji", "Fuji initialized - RX:%d TX:%d EN:%d NRST:%d", this->rx_pin_, this->tx_pin_, this->en_pin_, this->nrst_pin_);
+    ESP_LOGW("fuji", "setup() at %lums - RX:%d TX:%d EN:%d NRST:%d (priority=BUS, before WiFi)", 
+             millis(), this->rx_pin_, this->tx_pin_, this->en_pin_, this->nrst_pin_);
     this->lock = xSemaphoreCreateBinary();
     xSemaphoreGive(this->lock);
     this->pendingUpdate = false;
@@ -58,6 +71,8 @@ void FujitsuClimate::setup() {
         digitalWrite(this->nrst_pin_, HIGH);
         ESP_LOGD("fuji", "NRST pin %d set HIGH", this->nrst_pin_);
     }
+    // Allow LIN transceiver time to stabilize after enable
+    delay(10);
 
     this->heatPump.connect(&Serial2, true, this->rx_pin_, this->tx_pin_);
     ESP_LOGD("fuji", "starting task");

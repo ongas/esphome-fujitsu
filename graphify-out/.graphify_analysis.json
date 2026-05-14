@@ -1,0 +1,160 @@
+{
+  "communities": {
+    "0": [
+      "fujiheatpump_cpp",
+      "fujitsu_fujiheatpump_connect",
+      "fujitsu_fujiheatpump_getcontrollertemp",
+      "fujitsu_fujiheatpump_geteconomymode",
+      "fujitsu_fujiheatpump_getfanmode",
+      "fujitsu_fujiheatpump_getmode",
+      "fujitsu_fujiheatpump_getonoff",
+      "fujitsu_fujiheatpump_getswingmode",
+      "fujitsu_fujiheatpump_getswingstep",
+      "fujitsu_fujiheatpump_gettemp",
+      "fujitsu_fujiheatpump_getupdatefields",
+      "fujitsu_fujiheatpump_getupdatestate",
+      "fujitsu_fujiheatpump_updatepending"
+    ],
+    "1": [
+      "fujitsu_fujitsuclimate_control",
+      "fujitsu_fujitsuclimate_esptofujifanmode",
+      "fujitsu_fujitsuclimate_esptofujimode",
+      "fujitsu_fujitsuclimate_fujitoespfanmode",
+      "fujitsu_fujitsuclimate_fujitoespmode",
+      "fujitsu_fujitsuclimate_loop",
+      "fujitsu_fujitsuclimate_serialtask",
+      "fujitsu_fujitsuclimate_setup",
+      "fujitsu_fujitsuclimate_traits",
+      "fujitsu_fujitsuclimate_updatestate",
+      "fujitsuclimate_cpp"
+    ],
+    "2": [
+      "archive_yaml",
+      "esphome_climate",
+      "esphome_component",
+      "esphome_text_sensor",
+      "fuji_climate_h",
+      "fuji_climate_py",
+      "fuji_init_py",
+      "fujitsu_climate_class",
+      "fujitsu_yaml",
+      "readme_md"
+    ],
+    "3": [
+      "fujitsu_fujiheatpump_getcurrentstate",
+      "fujitsu_fujiheatpump_seteconomymode",
+      "fujitsu_fujiheatpump_setfanmode",
+      "fujitsu_fujiheatpump_setmode",
+      "fujitsu_fujiheatpump_setonoff",
+      "fujitsu_fujiheatpump_setstate",
+      "fujitsu_fujiheatpump_setswingmode",
+      "fujitsu_fujiheatpump_setswingstep",
+      "fujitsu_fujiheatpump_settemp"
+    ],
+    "4": [
+      "fuji_address",
+      "fuji_climate_cpp",
+      "fuji_fan_mode_enum",
+      "fuji_frame_struct",
+      "fuji_heatpump_class",
+      "fuji_heatpump_h",
+      "fuji_message_type",
+      "fuji_mode_enum",
+      "serial_task"
+    ],
+    "5": [
+      "fujitsu_fujiheatpump_attemptsecondarylogin",
+      "fujitsu_fujiheatpump_decodeframe",
+      "fujitsu_fujiheatpump_encodeframe",
+      "fujitsu_fujiheatpump_isbound",
+      "fujitsu_fujiheatpump_printframe",
+      "fujitsu_fujiheatpump_sendpendingframe",
+      "fujitsu_fujiheatpump_waitforframe"
+    ],
+    "6": [
+      "fujiheatpump_h",
+      "fujitsu_fujiheatpump_fujiaddress",
+      "fujitsu_fujiheatpump_fujiheatpump"
+    ],
+    "7": [
+      "climate_py",
+      "fujitsu_climate_to_code"
+    ],
+    "8": [
+      "fujitsu_fujitsuclimate_esphome",
+      "fujitsuclimate_h"
+    ],
+    "9": [
+      "init_py"
+    ],
+    "10": [
+      "fuji_heatpump_cpp"
+    ]
+  },
+  "cohesion": {},
+  "god_nodes": [
+    {
+      "id": "fujitsu_fujiheatpump_setstate",
+      "label": "setState()",
+      "degree": 9
+    },
+    {
+      "id": "fujitsu_fujiheatpump_waitforframe",
+      "label": "waitForFrame()",
+      "degree": 5
+    },
+    {
+      "id": "fujitsu_fujiheatpump_encodeframe",
+      "label": "encodeFrame()",
+      "degree": 4
+    },
+    {
+      "id": "fujitsu_fujitsuclimate_updatestate",
+      "label": "updateState()",
+      "degree": 4
+    },
+    {
+      "id": "fujitsu_fujiheatpump_isbound",
+      "label": "isBound()",
+      "degree": 3
+    },
+    {
+      "id": "fujitsu_fujiheatpump_attemptsecondarylogin",
+      "label": "attemptSecondaryLogin()",
+      "degree": 3
+    },
+    {
+      "id": "fujitsu_fujitsuclimate_control",
+      "label": "control()",
+      "degree": 3
+    },
+    {
+      "id": "fujitsu_fujiheatpump_decodeframe",
+      "label": "decodeFrame()",
+      "degree": 2
+    },
+    {
+      "id": "fujitsu_fujiheatpump_printframe",
+      "label": "printFrame()",
+      "degree": 2
+    },
+    {
+      "id": "fujitsu_fujiheatpump_sendpendingframe",
+      "label": "sendPendingFrame()",
+      "degree": 2
+    }
+  ],
+  "surprises": [
+    {
+      "source": "README.md",
+      "target": "FujiHeatPump.h",
+      "source_files": [
+        "",
+        ""
+      ],
+      "confidence": "INFERRED",
+      "relation": "documents",
+      "note": "Bridges community 4 \u2192 community 2"
+    }
+  ]
+}

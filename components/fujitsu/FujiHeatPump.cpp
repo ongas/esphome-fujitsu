@@ -131,6 +131,7 @@ void FujiHeatPump::connect(HardwareSerial *serial, bool secondary,
     {
         controllerIsPrimary = false;
         controllerAddress = static_cast<byte>(FujiAddress::SECONDARY);
+        ESP_LOGW("fuji", "=== SECONDARY mode (addr 33) at %lums: waiting for PRIMARY probe ===", millis());
     }
     else
     {
@@ -162,10 +163,44 @@ void FujiHeatPump::sendPendingFrame()
         _serial->flush();
         pendingFrame = false;
         updateFields = 0;
+        
+        // Track response for diagnostics
+        responseSentCount++;
+        responseSentMs = millis();
 
         _serial->readBytes(
             writeBuf,
             8); // read back our own frame so we dont process it again
+    }
+    
+    // Auto-login injection: send SECONDARY login after bus goes idle
+    if (autoLoginPending && !pendingFrame && (millis() - lastFrameReceived) > 50)
+    {
+        autoLoginPending = false;
+        autoLoginLastAttempt = millis();
+        autoLoginCount++;
+        
+        FujiFrame loginFrame;
+        memset(&loginFrame, 0, sizeof(FujiFrame));
+        loginFrame.messageDest = static_cast<byte>(FujiAddress::UNIT);
+        loginFrame.messageSource = static_cast<byte>(FujiAddress::SECONDARY);
+        loginFrame.messageType = static_cast<byte>(FujiMessageType::STATUS);
+        loginFrame.controllerPresent = 1;
+        loginFrame.loginBit = false;
+        loginFrame.updateMagic = 2;
+        loginFrame.unknownBit = true;
+        loginFrame.writeBit = 0;
+        
+        encodeFrame(loginFrame);
+        for (int i = 0; i < 8; i++) {
+            writeBuf[i] ^= 0xFF;
+        }
+        _serial->write(writeBuf, 8);
+        _serial->flush();
+        _serial->readBytes(writeBuf, 8);  // read back our own frame
+        
+        ESP_LOGW("fuji", ">>> AUTO-LOGIN #%lu sent (SECONDARY→UNIT STATUS cP=1) uptime=%lu", 
+                 autoLoginCount, millis());
     }
 }
 
@@ -191,10 +226,66 @@ bool FujiHeatPump::waitForFrame()
 
         ff = decodeFrame();
 
-        // Log ALL frames to diagnose login issues
-        ESP_LOGD("fuji", "FRAME src=%d dst=%d type=%d cP=%d login=%d write=%d onOff=%d temp=%d",
-            ff.messageSource, ff.messageDest, ff.messageType,
-            ff.controllerPresent, ff.loginBit, ff.writeBit, ff.onOff, ff.temperature);
+        // === Track unique frame patterns (src/dst/type/cP) ===
+        {
+            bool found = false;
+            for (int i = 0; i < seenPatternCount; i++) {
+                if (seenPatterns[i].src == ff.messageSource && seenPatterns[i].dst == ff.messageDest &&
+                    seenPatterns[i].type == ff.messageType && seenPatterns[i].cP == ff.controllerPresent) {
+                    seenPatterns[i].count++;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found && seenPatternCount < 16) {
+                seenPatterns[seenPatternCount] = {ff.messageSource, ff.messageDest, ff.messageType, ff.controllerPresent, 1};
+                ESP_LOGW("fuji", "NEW PATTERN: src=%d dst=%d type=%d cP=%d login=%d raw=%02X %02X %02X %02X %02X %02X %02X %02X",
+                    ff.messageSource, ff.messageDest, ff.messageType, ff.controllerPresent, ff.loginBit,
+                    readBuf[0], readBuf[1], readBuf[2], readBuf[3], readBuf[4], readBuf[5], readBuf[6], readBuf[7]);
+                seenPatternCount++;
+            }
+        }
+
+        // === LOG ALL LOGIN FRAMES on the bus (regardless of destination) ===
+        if (ff.messageType == static_cast<byte>(FujiMessageType::LOGIN)) {
+            ESP_LOGW("fuji", "!!! LOGIN FRAME on bus: src=%d dst=%d cP=%d login=%d raw=%02X %02X %02X %02X %02X %02X %02X %02X uptime=%lu",
+                ff.messageSource, ff.messageDest, ff.controllerPresent, ff.loginBit,
+                readBuf[0], readBuf[1], readBuf[2], readBuf[3], readBuf[4], readBuf[5], readBuf[6], readBuf[7],
+                millis());
+        }
+
+        // === Auto-login: after seeing PRIMARY→UNIT response, queue our SECONDARY login ===
+        if (autoLoginEnabled && !isBound() && 
+            ff.messageSource == static_cast<byte>(FujiAddress::PRIMARY) && 
+            ff.messageDest == static_cast<byte>(FujiAddress::UNIT) &&
+            (millis() - autoLoginLastAttempt) > 10000) {  // max once per 10 sec
+            autoLoginPending = true;
+        }
+
+        // Log frames addressed to SECONDARY (33) or with unexpected destinations
+        if (ff.messageDest == static_cast<byte>(FujiAddress::SECONDARY)) {
+            ESP_LOGW("fuji", "!!! PROBE FOR SECONDARY: src=%d type=%d cP=%d login=%d uM=%d raw=%02X %02X %02X %02X %02X %02X %02X %02X uptime=%lu",
+                ff.messageSource, ff.messageType,
+                ff.controllerPresent, ff.loginBit, ff.updateMagic,
+                readBuf[0], readBuf[1], readBuf[2], readBuf[3], readBuf[4], readBuf[5], readBuf[6], readBuf[7],
+                millis());
+            frameDestSecondary++;
+        } else if (ff.messageDest == static_cast<byte>(FujiAddress::PRIMARY)) {
+            frameDestPrimary++;
+        } else {
+            // Log first occurrence of each unique "other" destination
+            bool alreadyLogged = false;
+            for (int i = 0; i < loggedOtherCount; i++) {
+                if (loggedOtherDests[i] == ff.messageDest) { alreadyLogged = true; break; }
+            }
+            if (!alreadyLogged && loggedOtherCount < 8) {
+                loggedOtherDests[loggedOtherCount++] = ff.messageDest;
+                ESP_LOGW("fuji", "OTHER dst=%d src=%d type=%d raw=%02X %02X %02X %02X %02X %02X %02X %02X",
+                    ff.messageDest, ff.messageSource, ff.messageType,
+                    readBuf[0], readBuf[1], readBuf[2], readBuf[3], readBuf[4], readBuf[5], readBuf[6], readBuf[7]);
+            }
+            frameDestOther++;
+        }
 
 #ifdef DEBUG_FUJI
         ESP_LOGD("fuji", "<-- ");
@@ -212,6 +303,14 @@ bool FujiHeatPump::waitForFrame()
         if (ff.messageDest == controllerAddress)
         {
             lastFrameReceived = millis();
+            
+            // Track probe reception for SECONDARY diagnostics
+            if (!controllerIsPrimary) {
+                probeReceivedCount++;
+                probeReceivedMs = millis();
+                ESP_LOGW("fuji", "!!! FRAME FOR US at %lums: src=%d type=%d cP=%d uM=%d", 
+                    millis(), ff.messageSource, ff.messageType, ff.controllerPresent, ff.updateMagic);
+            }
 
             if (ff.messageType == static_cast<byte>(FujiMessageType::STATUS))
             {
@@ -235,6 +334,8 @@ bool FujiHeatPump::waitForFrame()
                         ff.controllerPresent = 1;
                     }
 
+                    // SECONDARY: updateMagic=0 for steady-state (uM=2 only in first response, handled in cP==0 path)
+                    // PRIMARY: updateMagic=0 always
                     ff.updateMagic = 0;
                     ff.unknownBit = true;
                     ff.writeBit = 0;
@@ -367,7 +468,33 @@ bool FujiHeatPump::waitForFrame()
                 writeBuf[i] ^= 0xFF;
             }
 
-            pendingFrame = true;
+            // SECONDARY mode: send response IMMEDIATELY (no delay)
+            // On the half-duplex bus, our time slot comes right after the probe.
+            // The 60ms delay + 50ms idle check in sendPendingFrame() is too late.
+            if (!controllerIsPrimary) {
+                ESP_LOGW("fuji", ">>> TX IMMEDIATE: src=%d dst=%d type=%d cP=%d login=%d uM=%d TX=%02X %02X %02X %02X %02X %02X %02X %02X @%lums",
+                    ff.messageSource, ff.messageDest, ff.messageType,
+                    ff.controllerPresent, ff.loginBit, ff.updateMagic,
+                    writeBuf[0], writeBuf[1], writeBuf[2], writeBuf[3], writeBuf[4], writeBuf[5], writeBuf[6], writeBuf[7],
+                    millis());
+                
+                _serial->write(writeBuf, 8);
+                _serial->flush();
+                pendingFrame = false;
+                updateFields = 0;
+                responseSentCount++;
+                responseSentMs = millis();
+                
+                // Drain any echo bytes without blocking on a full 8-byte read
+                // (the 200ms blocking readback was eating follow-up bus frames)
+                unsigned long drainStart = millis();
+                while (_serial->available() && (millis() - drainStart) < 50) {
+                    _serial->read();
+                }
+            } else {
+                // PRIMARY mode: use deferred send (original behavior)
+                pendingFrame = true;
+            }
         }
         else if (ff.messageDest ==
                  static_cast<byte>(FujiAddress::SECONDARY))
@@ -508,36 +635,6 @@ void FujiHeatPump::setState(FujiFrame *state)
 }
 
 byte FujiHeatPump::getUpdateFields() { return updateFields; }
-
-void FujiHeatPump::attemptSecondaryLogin()
-{
-    ESP_LOGW("fuji", "attemptSecondaryLogin called: controllerIsPrimary=%d, isBound=%d", 
-             controllerIsPrimary, isBound());
-    
-    if (controllerIsPrimary)
-    {
-        ESP_LOGW("fuji", "attemptSecondaryLogin: already PRIMARY, skipping");
-        return;
-    }
-    
-    FujiFrame loginFrame;
-    loginFrame.messageDest = static_cast<byte>(FujiAddress::UNIT);
-    loginFrame.messageSource = static_cast<byte>(FujiAddress::SECONDARY);
-    loginFrame.messageType = static_cast<byte>(FujiMessageType::STATUS);
-    loginFrame.controllerPresent = 1;
-    loginFrame.loginBit = true;
-    loginFrame.unknownBit = true;
-    loginFrame.writeBit = 0;
-    
-    encodeFrame(loginFrame);
-    for (int i = 0; i < 8; i++)
-    {
-        writeBuf[i] ^= 0xFF;
-    }
-    _serial->write(writeBuf, 8);
-    
-    ESP_LOGW("fuji", "Sent SECONDARY login request (SECONDARY→UNIT with login bit set)");
-}
 
 }  // namespace fujitsu
 }  // namespace esphome

@@ -1,0 +1,1401 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {
+    "hyperedges": [
+      {
+        "id": "fujitsu_system",
+        "label": "Fujitsu AC Control System",
+        "members": [
+          "fuji_climate_py",
+          "fuji_climate_h",
+          "fuji_climate_cpp",
+          "fuji_heatpump_h",
+          "fuji_heatpump_cpp",
+          "fujitsu_yaml"
+        ],
+        "relation": "forms integrated control system"
+      },
+      {
+        "id": "esphome_integration",
+        "label": "ESPHome Integration Layer",
+        "members": [
+          "fuji_climate_py",
+          "fuji_init_py",
+          "fujitsu_yaml"
+        ],
+        "relation": "bridges configuration and C++ implementation"
+      },
+      {
+        "id": "protocol_layer",
+        "label": "LIN Protocol Implementation",
+        "members": [
+          "fuji_heatpump_h",
+          "fuji_heatpump_cpp",
+          "fuji_frame_struct",
+          "fuji_message_type",
+          "fuji_address"
+        ],
+        "relation": "implements LIN bus communication"
+      }
+    ]
+  },
+  "nodes": [
+    {
+      "label": "climate.py",
+      "file_type": "code",
+      "source_file": "climate.py",
+      "source_location": "L1",
+      "id": "climate_py"
+    },
+    {
+      "label": "to_code()",
+      "file_type": "code",
+      "source_file": "climate.py",
+      "source_location": "L36",
+      "id": "fujitsu_climate_to_code"
+    },
+    {
+      "label": "FujiHeatPump.cpp",
+      "file_type": "code",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L1",
+      "id": "fujiheatpump_cpp"
+    },
+    {
+      "label": "decodeFrame()",
+      "file_type": "code",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L10",
+      "id": "fujitsu_fujiheatpump_decodeframe"
+    },
+    {
+      "label": "encodeFrame()",
+      "file_type": "code",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L42",
+      "id": "fujitsu_fujiheatpump_encodeframe"
+    },
+    {
+      "label": "connect()",
+      "file_type": "code",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L106",
+      "id": "fujitsu_fujiheatpump_connect"
+    },
+    {
+      "label": "printFrame()",
+      "file_type": "code",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L144",
+      "id": "fujitsu_fujiheatpump_printframe"
+    },
+    {
+      "label": "sendPendingFrame()",
+      "file_type": "code",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L157",
+      "id": "fujitsu_fujiheatpump_sendpendingframe"
+    },
+    {
+      "label": "waitForFrame()",
+      "file_type": "code",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L202",
+      "id": "fujitsu_fujiheatpump_waitforframe"
+    },
+    {
+      "label": "isBound()",
+      "file_type": "code",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L488",
+      "id": "fujitsu_fujiheatpump_isbound"
+    },
+    {
+      "label": "updatePending()",
+      "file_type": "code",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L497",
+      "id": "fujitsu_fujiheatpump_updatepending"
+    },
+    {
+      "label": "setOnOff()",
+      "file_type": "code",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L506",
+      "id": "fujitsu_fujiheatpump_setonoff"
+    },
+    {
+      "label": "setTemp()",
+      "file_type": "code",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L511",
+      "id": "fujitsu_fujiheatpump_settemp"
+    },
+    {
+      "label": "setMode()",
+      "file_type": "code",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L516",
+      "id": "fujitsu_fujiheatpump_setmode"
+    },
+    {
+      "label": "setFanMode()",
+      "file_type": "code",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L521",
+      "id": "fujitsu_fujiheatpump_setfanmode"
+    },
+    {
+      "label": "setEconomyMode()",
+      "file_type": "code",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L526",
+      "id": "fujitsu_fujiheatpump_seteconomymode"
+    },
+    {
+      "label": "setSwingMode()",
+      "file_type": "code",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L531",
+      "id": "fujitsu_fujiheatpump_setswingmode"
+    },
+    {
+      "label": "setSwingStep()",
+      "file_type": "code",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L536",
+      "id": "fujitsu_fujiheatpump_setswingstep"
+    },
+    {
+      "label": "getOnOff()",
+      "file_type": "code",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L542",
+      "id": "fujitsu_fujiheatpump_getonoff"
+    },
+    {
+      "label": "getTemp()",
+      "file_type": "code",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L543",
+      "id": "fujitsu_fujiheatpump_gettemp"
+    },
+    {
+      "label": "getMode()",
+      "file_type": "code",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L544",
+      "id": "fujitsu_fujiheatpump_getmode"
+    },
+    {
+      "label": "getFanMode()",
+      "file_type": "code",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L545",
+      "id": "fujitsu_fujiheatpump_getfanmode"
+    },
+    {
+      "label": "getEconomyMode()",
+      "file_type": "code",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L546",
+      "id": "fujitsu_fujiheatpump_geteconomymode"
+    },
+    {
+      "label": "getSwingMode()",
+      "file_type": "code",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L547",
+      "id": "fujitsu_fujiheatpump_getswingmode"
+    },
+    {
+      "label": "getSwingStep()",
+      "file_type": "code",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L548",
+      "id": "fujitsu_fujiheatpump_getswingstep"
+    },
+    {
+      "label": "getControllerTemp()",
+      "file_type": "code",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L549",
+      "id": "fujitsu_fujiheatpump_getcontrollertemp"
+    },
+    {
+      "label": "getCurrentState()",
+      "file_type": "code",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L551",
+      "id": "fujitsu_fujiheatpump_getcurrentstate"
+    },
+    {
+      "label": "getUpdateState()",
+      "file_type": "code",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L553",
+      "id": "fujitsu_fujiheatpump_getupdatestate"
+    },
+    {
+      "label": "setState()",
+      "file_type": "code",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L555",
+      "id": "fujitsu_fujiheatpump_setstate"
+    },
+    {
+      "label": "getUpdateFields()",
+      "file_type": "code",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L594",
+      "id": "fujitsu_fujiheatpump_getupdatefields"
+    },
+    {
+      "label": "attemptSecondaryLogin()",
+      "file_type": "code",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L596",
+      "id": "fujitsu_fujiheatpump_attemptsecondarylogin"
+    },
+    {
+      "label": "FujiHeatPump.h",
+      "file_type": "code",
+      "source_file": "FujiHeatPump.h",
+      "source_location": "L1",
+      "id": "fujiheatpump_h"
+    },
+    {
+      "label": "FujiHeatPump()",
+      "file_type": "code",
+      "source_file": "FujiHeatPump.h",
+      "source_location": "L75",
+      "id": "fujitsu_fujiheatpump_fujiheatpump"
+    },
+    {
+      "label": "FujiAddress()",
+      "file_type": "code",
+      "source_file": "FujiHeatPump.h",
+      "source_location": "L171",
+      "id": "fujitsu_fujiheatpump_fujiaddress"
+    },
+    {
+      "label": "FujitsuClimate.cpp",
+      "file_type": "code",
+      "source_file": "FujitsuClimate.cpp",
+      "source_location": "L1",
+      "id": "fujitsuclimate_cpp"
+    },
+    {
+      "label": "serialTask()",
+      "file_type": "code",
+      "source_file": "FujitsuClimate.cpp",
+      "source_location": "L7",
+      "id": "fujitsu_fujitsuclimate_serialtask"
+    },
+    {
+      "label": "setup()",
+      "file_type": "code",
+      "source_file": "FujitsuClimate.cpp",
+      "source_location": "L53",
+      "id": "fujitsu_fujitsuclimate_setup"
+    },
+    {
+      "label": "fujiToEspMode()",
+      "file_type": "code",
+      "source_file": "FujitsuClimate.cpp",
+      "source_location": "L79",
+      "id": "fujitsu_fujitsuclimate_fujitoespmode"
+    },
+    {
+      "label": "espToFujiMode()",
+      "file_type": "code",
+      "source_file": "FujitsuClimate.cpp",
+      "source_location": "L99",
+      "id": "fujitsu_fujitsuclimate_esptofujimode"
+    },
+    {
+      "label": "fujiToEspFanMode()",
+      "file_type": "code",
+      "source_file": "FujitsuClimate.cpp",
+      "source_location": "L118",
+      "id": "fujitsu_fujitsuclimate_fujitoespfanmode"
+    },
+    {
+      "label": "espToFujiFanMode()",
+      "file_type": "code",
+      "source_file": "FujitsuClimate.cpp",
+      "source_location": "L139",
+      "id": "fujitsu_fujitsuclimate_esptofujifanmode"
+    },
+    {
+      "label": "updateState()",
+      "file_type": "code",
+      "source_file": "FujitsuClimate.cpp",
+      "source_location": "L160",
+      "id": "fujitsu_fujitsuclimate_updatestate"
+    },
+    {
+      "label": "loop()",
+      "file_type": "code",
+      "source_file": "FujitsuClimate.cpp",
+      "source_location": "L253",
+      "id": "fujitsu_fujitsuclimate_loop"
+    },
+    {
+      "label": "control()",
+      "file_type": "code",
+      "source_file": "FujitsuClimate.cpp",
+      "source_location": "L255",
+      "id": "fujitsu_fujitsuclimate_control"
+    },
+    {
+      "label": "traits()",
+      "file_type": "code",
+      "source_file": "FujitsuClimate.cpp",
+      "source_location": "L311",
+      "id": "fujitsu_fujitsuclimate_traits"
+    },
+    {
+      "label": "FujitsuClimate.h",
+      "file_type": "code",
+      "source_file": "FujitsuClimate.h",
+      "source_location": "L1",
+      "id": "fujitsuclimate_h"
+    },
+    {
+      "label": "esphome()",
+      "file_type": "code",
+      "source_file": "FujitsuClimate.h",
+      "source_location": "L7",
+      "id": "fujitsu_fujitsuclimate_esphome"
+    },
+    {
+      "label": "__init__.py",
+      "file_type": "code",
+      "source_file": "__init__.py",
+      "source_location": "L1",
+      "id": "init_py"
+    },
+    {
+      "label": "climate.py",
+      "file_type": "code",
+      "id": "fuji_climate_py"
+    },
+    {
+      "label": "FujiHeatPump.h",
+      "file_type": "code",
+      "id": "fuji_heatpump_h"
+    },
+    {
+      "label": "FujiHeatPump.cpp",
+      "file_type": "code",
+      "id": "fuji_heatpump_cpp"
+    },
+    {
+      "label": "FujitsuClimate.h",
+      "file_type": "code",
+      "id": "fuji_climate_h"
+    },
+    {
+      "label": "FujitsuClimate.cpp",
+      "file_type": "code",
+      "id": "fuji_climate_cpp"
+    },
+    {
+      "label": "__init__.py",
+      "file_type": "code",
+      "id": "fuji_init_py"
+    },
+    {
+      "label": "fujitsu.yaml",
+      "file_type": "document",
+      "id": "fujitsu_yaml"
+    },
+    {
+      "label": "README.md",
+      "file_type": "document",
+      "id": "readme_md"
+    },
+    {
+      "label": "fujitsuacfirebeetle.yaml",
+      "file_type": "document",
+      "id": "archive_yaml"
+    },
+    {
+      "label": "FujitsuClimate",
+      "file_type": "code",
+      "id": "fujitsu_climate_class"
+    },
+    {
+      "label": "FujiHeatPump",
+      "file_type": "code",
+      "id": "fuji_heatpump_class"
+    },
+    {
+      "label": "FujiFrame",
+      "file_type": "code",
+      "id": "fuji_frame_struct"
+    },
+    {
+      "label": "climate.Climate",
+      "file_type": "code",
+      "id": "esphome_climate"
+    },
+    {
+      "label": "Component",
+      "file_type": "code",
+      "id": "esphome_component"
+    },
+    {
+      "label": "text_sensor.TextSensor",
+      "file_type": "code",
+      "id": "esphome_text_sensor"
+    },
+    {
+      "label": "serialTask",
+      "file_type": "code",
+      "id": "serial_task"
+    },
+    {
+      "label": "FujiMode",
+      "file_type": "code",
+      "id": "fuji_mode_enum"
+    },
+    {
+      "label": "FujiFanMode",
+      "file_type": "code",
+      "id": "fuji_fan_mode_enum"
+    },
+    {
+      "label": "FujiMessageType",
+      "file_type": "code",
+      "id": "fuji_message_type"
+    },
+    {
+      "label": "FujiAddress",
+      "file_type": "code",
+      "id": "fuji_address"
+    }
+  ],
+  "edges": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "climate.py",
+      "source_location": "L36",
+      "weight": 1.0,
+      "_src": "climate_py",
+      "_tgt": "fujitsu_climate_to_code",
+      "source": "climate_py",
+      "target": "fujitsu_climate_to_code"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_src": "fujiheatpump_cpp",
+      "_tgt": "fujitsu_fujiheatpump_decodeframe",
+      "source": "fujiheatpump_cpp",
+      "target": "fujitsu_fujiheatpump_decodeframe"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L42",
+      "weight": 1.0,
+      "_src": "fujiheatpump_cpp",
+      "_tgt": "fujitsu_fujiheatpump_encodeframe",
+      "source": "fujiheatpump_cpp",
+      "target": "fujitsu_fujiheatpump_encodeframe"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L111",
+      "weight": 1.0,
+      "_src": "fujiheatpump_cpp",
+      "_tgt": "fujitsu_fujiheatpump_connect",
+      "source": "fujiheatpump_cpp",
+      "target": "fujitsu_fujiheatpump_connect"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L144",
+      "weight": 1.0,
+      "_src": "fujiheatpump_cpp",
+      "_tgt": "fujitsu_fujiheatpump_printframe",
+      "source": "fujiheatpump_cpp",
+      "target": "fujitsu_fujiheatpump_printframe"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L157",
+      "weight": 1.0,
+      "_src": "fujiheatpump_cpp",
+      "_tgt": "fujitsu_fujiheatpump_sendpendingframe",
+      "source": "fujiheatpump_cpp",
+      "target": "fujitsu_fujiheatpump_sendpendingframe"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L202",
+      "weight": 1.0,
+      "_src": "fujiheatpump_cpp",
+      "_tgt": "fujitsu_fujiheatpump_waitforframe",
+      "source": "fujiheatpump_cpp",
+      "target": "fujitsu_fujiheatpump_waitforframe"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L488",
+      "weight": 1.0,
+      "_src": "fujiheatpump_cpp",
+      "_tgt": "fujitsu_fujiheatpump_isbound",
+      "source": "fujiheatpump_cpp",
+      "target": "fujitsu_fujiheatpump_isbound"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L497",
+      "weight": 1.0,
+      "_src": "fujiheatpump_cpp",
+      "_tgt": "fujitsu_fujiheatpump_updatepending",
+      "source": "fujiheatpump_cpp",
+      "target": "fujitsu_fujiheatpump_updatepending"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L506",
+      "weight": 1.0,
+      "_src": "fujiheatpump_cpp",
+      "_tgt": "fujitsu_fujiheatpump_setonoff",
+      "source": "fujiheatpump_cpp",
+      "target": "fujitsu_fujiheatpump_setonoff"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L511",
+      "weight": 1.0,
+      "_src": "fujiheatpump_cpp",
+      "_tgt": "fujitsu_fujiheatpump_settemp",
+      "source": "fujiheatpump_cpp",
+      "target": "fujitsu_fujiheatpump_settemp"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L516",
+      "weight": 1.0,
+      "_src": "fujiheatpump_cpp",
+      "_tgt": "fujitsu_fujiheatpump_setmode",
+      "source": "fujiheatpump_cpp",
+      "target": "fujitsu_fujiheatpump_setmode"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L521",
+      "weight": 1.0,
+      "_src": "fujiheatpump_cpp",
+      "_tgt": "fujitsu_fujiheatpump_setfanmode",
+      "source": "fujiheatpump_cpp",
+      "target": "fujitsu_fujiheatpump_setfanmode"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L526",
+      "weight": 1.0,
+      "_src": "fujiheatpump_cpp",
+      "_tgt": "fujitsu_fujiheatpump_seteconomymode",
+      "source": "fujiheatpump_cpp",
+      "target": "fujitsu_fujiheatpump_seteconomymode"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L531",
+      "weight": 1.0,
+      "_src": "fujiheatpump_cpp",
+      "_tgt": "fujitsu_fujiheatpump_setswingmode",
+      "source": "fujiheatpump_cpp",
+      "target": "fujitsu_fujiheatpump_setswingmode"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L536",
+      "weight": 1.0,
+      "_src": "fujiheatpump_cpp",
+      "_tgt": "fujitsu_fujiheatpump_setswingstep",
+      "source": "fujiheatpump_cpp",
+      "target": "fujitsu_fujiheatpump_setswingstep"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L542",
+      "weight": 1.0,
+      "_src": "fujiheatpump_cpp",
+      "_tgt": "fujitsu_fujiheatpump_getonoff",
+      "source": "fujiheatpump_cpp",
+      "target": "fujitsu_fujiheatpump_getonoff"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L543",
+      "weight": 1.0,
+      "_src": "fujiheatpump_cpp",
+      "_tgt": "fujitsu_fujiheatpump_gettemp",
+      "source": "fujiheatpump_cpp",
+      "target": "fujitsu_fujiheatpump_gettemp"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L544",
+      "weight": 1.0,
+      "_src": "fujiheatpump_cpp",
+      "_tgt": "fujitsu_fujiheatpump_getmode",
+      "source": "fujiheatpump_cpp",
+      "target": "fujitsu_fujiheatpump_getmode"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L545",
+      "weight": 1.0,
+      "_src": "fujiheatpump_cpp",
+      "_tgt": "fujitsu_fujiheatpump_getfanmode",
+      "source": "fujiheatpump_cpp",
+      "target": "fujitsu_fujiheatpump_getfanmode"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L546",
+      "weight": 1.0,
+      "_src": "fujiheatpump_cpp",
+      "_tgt": "fujitsu_fujiheatpump_geteconomymode",
+      "source": "fujiheatpump_cpp",
+      "target": "fujitsu_fujiheatpump_geteconomymode"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L547",
+      "weight": 1.0,
+      "_src": "fujiheatpump_cpp",
+      "_tgt": "fujitsu_fujiheatpump_getswingmode",
+      "source": "fujiheatpump_cpp",
+      "target": "fujitsu_fujiheatpump_getswingmode"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L548",
+      "weight": 1.0,
+      "_src": "fujiheatpump_cpp",
+      "_tgt": "fujitsu_fujiheatpump_getswingstep",
+      "source": "fujiheatpump_cpp",
+      "target": "fujitsu_fujiheatpump_getswingstep"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L549",
+      "weight": 1.0,
+      "_src": "fujiheatpump_cpp",
+      "_tgt": "fujitsu_fujiheatpump_getcontrollertemp",
+      "source": "fujiheatpump_cpp",
+      "target": "fujitsu_fujiheatpump_getcontrollertemp"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L551",
+      "weight": 1.0,
+      "_src": "fujiheatpump_cpp",
+      "_tgt": "fujitsu_fujiheatpump_getcurrentstate",
+      "source": "fujiheatpump_cpp",
+      "target": "fujitsu_fujiheatpump_getcurrentstate"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L553",
+      "weight": 1.0,
+      "_src": "fujiheatpump_cpp",
+      "_tgt": "fujitsu_fujiheatpump_getupdatestate",
+      "source": "fujiheatpump_cpp",
+      "target": "fujitsu_fujiheatpump_getupdatestate"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L555",
+      "weight": 1.0,
+      "_src": "fujiheatpump_cpp",
+      "_tgt": "fujitsu_fujiheatpump_setstate",
+      "source": "fujiheatpump_cpp",
+      "target": "fujitsu_fujiheatpump_setstate"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L594",
+      "weight": 1.0,
+      "_src": "fujiheatpump_cpp",
+      "_tgt": "fujitsu_fujiheatpump_getupdatefields",
+      "source": "fujiheatpump_cpp",
+      "target": "fujitsu_fujiheatpump_getupdatefields"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L596",
+      "weight": 1.0,
+      "_src": "fujiheatpump_cpp",
+      "_tgt": "fujitsu_fujiheatpump_attemptsecondarylogin",
+      "source": "fujiheatpump_cpp",
+      "target": "fujitsu_fujiheatpump_attemptsecondarylogin"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L222",
+      "weight": 1.0,
+      "_src": "fujitsu_fujiheatpump_waitforframe",
+      "_tgt": "fujitsu_fujiheatpump_decodeframe",
+      "source": "fujitsu_fujiheatpump_decodeframe",
+      "target": "fujitsu_fujiheatpump_waitforframe"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L189",
+      "weight": 1.0,
+      "_src": "fujitsu_fujiheatpump_sendpendingframe",
+      "_tgt": "fujitsu_fujiheatpump_encodeframe",
+      "source": "fujitsu_fujiheatpump_encodeframe",
+      "target": "fujitsu_fujiheatpump_sendpendingframe"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L442",
+      "weight": 1.0,
+      "_src": "fujitsu_fujiheatpump_waitforframe",
+      "_tgt": "fujitsu_fujiheatpump_encodeframe",
+      "source": "fujitsu_fujiheatpump_encodeframe",
+      "target": "fujitsu_fujiheatpump_waitforframe"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L616",
+      "weight": 1.0,
+      "_src": "fujitsu_fujiheatpump_attemptsecondarylogin",
+      "_tgt": "fujitsu_fujiheatpump_encodeframe",
+      "source": "fujitsu_fujiheatpump_encodeframe",
+      "target": "fujitsu_fujiheatpump_attemptsecondarylogin"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L285",
+      "weight": 1.0,
+      "_src": "fujitsu_fujiheatpump_waitforframe",
+      "_tgt": "fujitsu_fujiheatpump_printframe",
+      "source": "fujitsu_fujiheatpump_printframe",
+      "target": "fujitsu_fujiheatpump_waitforframe"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L253",
+      "weight": 1.0,
+      "_src": "fujitsu_fujiheatpump_waitforframe",
+      "_tgt": "fujitsu_fujiheatpump_isbound",
+      "source": "fujitsu_fujiheatpump_waitforframe",
+      "target": "fujitsu_fujiheatpump_isbound"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L599",
+      "weight": 1.0,
+      "_src": "fujitsu_fujiheatpump_attemptsecondarylogin",
+      "_tgt": "fujitsu_fujiheatpump_isbound",
+      "source": "fujitsu_fujiheatpump_isbound",
+      "target": "fujitsu_fujiheatpump_attemptsecondarylogin"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L560",
+      "weight": 1.0,
+      "_src": "fujitsu_fujiheatpump_setstate",
+      "_tgt": "fujitsu_fujiheatpump_setonoff",
+      "source": "fujitsu_fujiheatpump_setonoff",
+      "target": "fujitsu_fujiheatpump_setstate"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L565",
+      "weight": 1.0,
+      "_src": "fujitsu_fujiheatpump_setstate",
+      "_tgt": "fujitsu_fujiheatpump_settemp",
+      "source": "fujitsu_fujiheatpump_settemp",
+      "target": "fujitsu_fujiheatpump_setstate"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L570",
+      "weight": 1.0,
+      "_src": "fujitsu_fujiheatpump_setstate",
+      "_tgt": "fujitsu_fujiheatpump_setmode",
+      "source": "fujitsu_fujiheatpump_setmode",
+      "target": "fujitsu_fujiheatpump_setstate"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L575",
+      "weight": 1.0,
+      "_src": "fujitsu_fujiheatpump_setstate",
+      "_tgt": "fujitsu_fujiheatpump_setfanmode",
+      "source": "fujitsu_fujiheatpump_setfanmode",
+      "target": "fujitsu_fujiheatpump_setstate"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L580",
+      "weight": 1.0,
+      "_src": "fujitsu_fujiheatpump_setstate",
+      "_tgt": "fujitsu_fujiheatpump_seteconomymode",
+      "source": "fujitsu_fujiheatpump_seteconomymode",
+      "target": "fujitsu_fujiheatpump_setstate"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L585",
+      "weight": 1.0,
+      "_src": "fujitsu_fujiheatpump_setstate",
+      "_tgt": "fujitsu_fujiheatpump_setswingmode",
+      "source": "fujitsu_fujiheatpump_setswingmode",
+      "target": "fujitsu_fujiheatpump_setstate"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L590",
+      "weight": 1.0,
+      "_src": "fujitsu_fujiheatpump_setstate",
+      "_tgt": "fujitsu_fujiheatpump_setswingstep",
+      "source": "fujitsu_fujiheatpump_setswingstep",
+      "target": "fujitsu_fujiheatpump_setstate"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.cpp",
+      "source_location": "L557",
+      "weight": 1.0,
+      "_src": "fujitsu_fujiheatpump_setstate",
+      "_tgt": "fujitsu_fujiheatpump_getcurrentstate",
+      "source": "fujitsu_fujiheatpump_getcurrentstate",
+      "target": "fujitsu_fujiheatpump_setstate"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.h",
+      "source_location": "L75",
+      "weight": 1.0,
+      "_src": "fujiheatpump_h",
+      "_tgt": "fujitsu_fujiheatpump_fujiheatpump",
+      "source": "fujiheatpump_h",
+      "target": "fujitsu_fujiheatpump_fujiheatpump"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FujiHeatPump.h",
+      "source_location": "L171",
+      "weight": 1.0,
+      "_src": "fujiheatpump_h",
+      "_tgt": "fujitsu_fujiheatpump_fujiaddress",
+      "source": "fujiheatpump_h",
+      "target": "fujitsu_fujiheatpump_fujiaddress"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FujitsuClimate.cpp",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_src": "fujitsuclimate_cpp",
+      "_tgt": "fujitsu_fujitsuclimate_serialtask",
+      "source": "fujitsuclimate_cpp",
+      "target": "fujitsu_fujitsuclimate_serialtask"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FujitsuClimate.cpp",
+      "source_location": "L53",
+      "weight": 1.0,
+      "_src": "fujitsuclimate_cpp",
+      "_tgt": "fujitsu_fujitsuclimate_setup",
+      "source": "fujitsuclimate_cpp",
+      "target": "fujitsu_fujitsuclimate_setup"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FujitsuClimate.cpp",
+      "source_location": "L79",
+      "weight": 1.0,
+      "_src": "fujitsuclimate_cpp",
+      "_tgt": "fujitsu_fujitsuclimate_fujitoespmode",
+      "source": "fujitsuclimate_cpp",
+      "target": "fujitsu_fujitsuclimate_fujitoespmode"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FujitsuClimate.cpp",
+      "source_location": "L99",
+      "weight": 1.0,
+      "_src": "fujitsuclimate_cpp",
+      "_tgt": "fujitsu_fujitsuclimate_esptofujimode",
+      "source": "fujitsuclimate_cpp",
+      "target": "fujitsu_fujitsuclimate_esptofujimode"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FujitsuClimate.cpp",
+      "source_location": "L118",
+      "weight": 1.0,
+      "_src": "fujitsuclimate_cpp",
+      "_tgt": "fujitsu_fujitsuclimate_fujitoespfanmode",
+      "source": "fujitsuclimate_cpp",
+      "target": "fujitsu_fujitsuclimate_fujitoespfanmode"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FujitsuClimate.cpp",
+      "source_location": "L139",
+      "weight": 1.0,
+      "_src": "fujitsuclimate_cpp",
+      "_tgt": "fujitsu_fujitsuclimate_esptofujifanmode",
+      "source": "fujitsuclimate_cpp",
+      "target": "fujitsu_fujitsuclimate_esptofujifanmode"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FujitsuClimate.cpp",
+      "source_location": "L160",
+      "weight": 1.0,
+      "_src": "fujitsuclimate_cpp",
+      "_tgt": "fujitsu_fujitsuclimate_updatestate",
+      "source": "fujitsuclimate_cpp",
+      "target": "fujitsu_fujitsuclimate_updatestate"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FujitsuClimate.cpp",
+      "source_location": "L253",
+      "weight": 1.0,
+      "_src": "fujitsuclimate_cpp",
+      "_tgt": "fujitsu_fujitsuclimate_loop",
+      "source": "fujitsuclimate_cpp",
+      "target": "fujitsu_fujitsuclimate_loop"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FujitsuClimate.cpp",
+      "source_location": "L255",
+      "weight": 1.0,
+      "_src": "fujitsuclimate_cpp",
+      "_tgt": "fujitsu_fujitsuclimate_control",
+      "source": "fujitsuclimate_cpp",
+      "target": "fujitsu_fujitsuclimate_control"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FujitsuClimate.cpp",
+      "source_location": "L311",
+      "weight": 1.0,
+      "_src": "fujitsuclimate_cpp",
+      "_tgt": "fujitsu_fujitsuclimate_traits",
+      "source": "fujitsuclimate_cpp",
+      "target": "fujitsu_fujitsuclimate_traits"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "FujitsuClimate.cpp",
+      "source_location": "L181",
+      "weight": 1.0,
+      "_src": "fujitsu_fujitsuclimate_updatestate",
+      "_tgt": "fujitsu_fujitsuclimate_fujitoespmode",
+      "source": "fujitsu_fujitsuclimate_fujitoespmode",
+      "target": "fujitsu_fujitsuclimate_updatestate"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "FujitsuClimate.cpp",
+      "source_location": "L262",
+      "weight": 1.0,
+      "_src": "fujitsu_fujitsuclimate_control",
+      "_tgt": "fujitsu_fujitsuclimate_esptofujimode",
+      "source": "fujitsu_fujitsuclimate_esptofujimode",
+      "target": "fujitsu_fujitsuclimate_control"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "FujitsuClimate.cpp",
+      "source_location": "L192",
+      "weight": 1.0,
+      "_src": "fujitsu_fujitsuclimate_updatestate",
+      "_tgt": "fujitsu_fujitsuclimate_fujitoespfanmode",
+      "source": "fujitsu_fujitsuclimate_fujitoespfanmode",
+      "target": "fujitsu_fujitsuclimate_updatestate"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "FujitsuClimate.cpp",
+      "source_location": "L295",
+      "weight": 1.0,
+      "_src": "fujitsu_fujitsuclimate_control",
+      "_tgt": "fujitsu_fujitsuclimate_esptofujifanmode",
+      "source": "fujitsu_fujitsuclimate_esptofujifanmode",
+      "target": "fujitsu_fujitsuclimate_control"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "FujitsuClimate.cpp",
+      "source_location": "L253",
+      "weight": 1.0,
+      "_src": "fujitsu_fujitsuclimate_loop",
+      "_tgt": "fujitsu_fujitsuclimate_updatestate",
+      "source": "fujitsu_fujitsuclimate_updatestate",
+      "target": "fujitsu_fujitsuclimate_loop"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FujitsuClimate.h",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_src": "fujitsuclimate_h",
+      "_tgt": "fujitsu_fujitsuclimate_esphome",
+      "source": "fujitsuclimate_h",
+      "target": "fujitsu_fujitsuclimate_esphome"
+    },
+    {
+      "relation": "extends configuration of",
+      "confidence": "INFERRED",
+      "_src": "fuji_climate_py",
+      "_tgt": "fuji_init_py",
+      "source": "fuji_climate_py",
+      "target": "fuji_init_py"
+    },
+    {
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "_src": "fuji_climate_py",
+      "_tgt": "esphome_climate",
+      "source": "fuji_climate_py",
+      "target": "esphome_climate"
+    },
+    {
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "_src": "fuji_climate_py",
+      "_tgt": "esphome_text_sensor",
+      "source": "fuji_climate_py",
+      "target": "esphome_text_sensor"
+    },
+    {
+      "relation": "registers",
+      "confidence": "EXTRACTED",
+      "_src": "fuji_climate_py",
+      "_tgt": "fujitsu_climate_class",
+      "source": "fuji_climate_py",
+      "target": "fujitsu_climate_class"
+    },
+    {
+      "relation": "configures",
+      "confidence": "EXTRACTED",
+      "_src": "fujitsu_yaml",
+      "_tgt": "fuji_climate_py",
+      "source": "fuji_climate_py",
+      "target": "fujitsu_yaml"
+    },
+    {
+      "relation": "alternative config for",
+      "confidence": "INFERRED",
+      "_src": "archive_yaml",
+      "_tgt": "fuji_climate_py",
+      "source": "fuji_climate_py",
+      "target": "archive_yaml"
+    },
+    {
+      "relation": "declares in C++",
+      "confidence": "EXTRACTED",
+      "_src": "fuji_climate_py",
+      "_tgt": "fuji_climate_h",
+      "source": "fuji_climate_py",
+      "target": "fuji_climate_h"
+    },
+    {
+      "relation": "includes",
+      "confidence": "EXTRACTED",
+      "_src": "fuji_climate_h",
+      "_tgt": "fuji_heatpump_h",
+      "source": "fuji_heatpump_h",
+      "target": "fuji_climate_h"
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "_src": "fuji_heatpump_h",
+      "_tgt": "fuji_frame_struct",
+      "source": "fuji_heatpump_h",
+      "target": "fuji_frame_struct"
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "_src": "fuji_heatpump_h",
+      "_tgt": "fuji_mode_enum",
+      "source": "fuji_heatpump_h",
+      "target": "fuji_mode_enum"
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "_src": "fuji_heatpump_h",
+      "_tgt": "fuji_fan_mode_enum",
+      "source": "fuji_heatpump_h",
+      "target": "fuji_fan_mode_enum"
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "_src": "fuji_heatpump_h",
+      "_tgt": "fuji_message_type",
+      "source": "fuji_heatpump_h",
+      "target": "fuji_message_type"
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "_src": "fuji_heatpump_h",
+      "_tgt": "fuji_address",
+      "source": "fuji_heatpump_h",
+      "target": "fuji_address"
+    },
+    {
+      "relation": "documents",
+      "confidence": "INFERRED",
+      "_src": "readme_md",
+      "_tgt": "fuji_heatpump_h",
+      "source": "fuji_heatpump_h",
+      "target": "readme_md"
+    },
+    {
+      "relation": "inherits from",
+      "confidence": "EXTRACTED",
+      "_src": "fuji_climate_h",
+      "_tgt": "esphome_climate",
+      "source": "fuji_climate_h",
+      "target": "esphome_climate"
+    },
+    {
+      "relation": "inherits from",
+      "confidence": "EXTRACTED",
+      "_src": "fuji_climate_h",
+      "_tgt": "esphome_component",
+      "source": "fuji_climate_h",
+      "target": "esphome_component"
+    },
+    {
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "_src": "fuji_climate_h",
+      "_tgt": "esphome_text_sensor",
+      "source": "fuji_climate_h",
+      "target": "esphome_text_sensor"
+    },
+    {
+      "relation": "includes",
+      "confidence": "EXTRACTED",
+      "_src": "fuji_climate_cpp",
+      "_tgt": "fuji_climate_h",
+      "source": "fuji_climate_h",
+      "target": "fuji_climate_cpp"
+    },
+    {
+      "relation": "documents",
+      "confidence": "INFERRED",
+      "_src": "readme_md",
+      "_tgt": "fuji_climate_h",
+      "source": "fuji_climate_h",
+      "target": "readme_md"
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "_src": "fuji_climate_cpp",
+      "_tgt": "serial_task",
+      "source": "fuji_climate_cpp",
+      "target": "serial_task"
+    },
+    {
+      "relation": "manages",
+      "confidence": "EXTRACTED",
+      "_src": "fuji_climate_cpp",
+      "_tgt": "fuji_heatpump_class",
+      "source": "fuji_climate_cpp",
+      "target": "fuji_heatpump_class"
+    },
+    {
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "_src": "fuji_climate_cpp",
+      "_tgt": "fuji_frame_struct",
+      "source": "fuji_climate_cpp",
+      "target": "fuji_frame_struct"
+    },
+    {
+      "relation": "converts from",
+      "confidence": "EXTRACTED",
+      "_src": "fuji_climate_cpp",
+      "_tgt": "fuji_mode_enum",
+      "source": "fuji_climate_cpp",
+      "target": "fuji_mode_enum"
+    },
+    {
+      "relation": "converts from",
+      "confidence": "EXTRACTED",
+      "_src": "fuji_climate_cpp",
+      "_tgt": "fuji_fan_mode_enum",
+      "source": "fuji_climate_cpp",
+      "target": "fuji_fan_mode_enum"
+    },
+    {
+      "relation": "documents",
+      "confidence": "INFERRED",
+      "_src": "readme_md",
+      "_tgt": "fuji_climate_cpp",
+      "source": "fuji_climate_cpp",
+      "target": "readme_md"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "_src": "serial_task",
+      "_tgt": "fuji_heatpump_class",
+      "source": "fuji_heatpump_class",
+      "target": "serial_task"
+    },
+    {
+      "relation": "copies",
+      "confidence": "EXTRACTED",
+      "_src": "serial_task",
+      "_tgt": "fuji_frame_struct",
+      "source": "fuji_frame_struct",
+      "target": "serial_task"
+    }
+  ]
+}

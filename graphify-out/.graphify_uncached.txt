@@ -1,0 +1,9 @@
+/mnt/e/source/repos/personal/homeassistant/custom_components/fujitsu/esphome-fujitsu/components/fujitsu/climate.py
+/mnt/e/source/repos/personal/homeassistant/custom_components/fujitsu/esphome-fujitsu/components/fujitsu/FujiHeatPump.cpp
+/mnt/e/source/repos/personal/homeassistant/custom_components/fujitsu/esphome-fujitsu/components/fujitsu/FujiHeatPump.h
+/mnt/e/source/repos/personal/homeassistant/custom_components/fujitsu/esphome-fujitsu/components/fujitsu/FujitsuClimate.cpp
+/mnt/e/source/repos/personal/homeassistant/custom_components/fujitsu/esphome-fujitsu/components/fujitsu/FujitsuClimate.h
+/mnt/e/source/repos/personal/homeassistant/custom_components/fujitsu/esphome-fujitsu/components/fujitsu/__init__.py
+/mnt/e/source/repos/personal/homeassistant/custom_components/fujitsu/esphome-fujitsu/fujitsu.yaml
+/mnt/e/source/repos/personal/homeassistant/custom_components/fujitsu/esphome-fujitsu/README.md
+/mnt/e/source/repos/personal/homeassistant/custom_components/fujitsu/esphome-fujitsu/archive/fujitsuacfirebeetle.yaml
