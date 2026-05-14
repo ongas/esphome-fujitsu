@@ -408,8 +408,7 @@ void FujitsuClimate::control(const climate::ClimateCall &call) {
             auto callFanMode = call.get_fan_mode().value();
             auto fujiFanMode = this->espToFujiFanMode(callFanMode);
             if (fujiFanMode.has_value()) {
-                this->heatPump.setFanMode(
-                    static_cast<byte>(fujiFanMode.value()));
+                this->sharedState.fanMode = static_cast<byte>(fujiFanMode.value());
             }
             this->fan_mode = callFanMode;
             updated = true;
