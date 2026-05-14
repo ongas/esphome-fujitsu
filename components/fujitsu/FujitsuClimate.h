@@ -35,7 +35,19 @@ class FujitsuClimate : public climate::Climate, public Component {
     text_sensor::TextSensor *status_sensor_{nullptr};
     std::string last_status_;
 
+    // Write retry state
+    static const int kMaxRetries = 5;
+    static const unsigned long kRetryIntervalMs = 2000;
+    bool retryActive_{false};
+    int retryCount_{0};
+    unsigned long retryRequestTime_{0};
+    unsigned long retryLastAttempt_{0};
+    FujiFrame retryState_;       // desired values
+    byte retryFields_{0};        // which fields to verify (uses kXxxUpdateMask)
+
     void updateState();
+    void startRetry(byte fields);
+    void checkRetry();
     optional<climate::ClimateMode> fujiToEspMode(FujiMode fujiMode);
     optional<FujiMode> espToFujiMode(climate::ClimateMode espMode);
     

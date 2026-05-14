@@ -187,16 +187,27 @@ void FujitsuClimate::updateState() {
     if (this->pendingUpdate) {  // wait till update is sent
         return;
     }
+    
+    // Check if a pending retry needs re-sending
+    this->checkRetry();
+    if (this->pendingUpdate) return;  // checkRetry may have re-sent
+    
+    // While retry is active, don't sync fields we're waiting on —
+    // this prevents the UI from bouncing back to old values before
+    // the unit has had time to process our write.
+    byte holdFields = this->retryActive_ ? this->retryFields_ : 0;
+    
     bool updated = false;
     if (xSemaphoreTake(this->lock, TickType_t(200)) == pdTRUE) {
-        // Room temp
+        // Room temp (always sync — this is read-only sensor data)
         if (this->current_temperature != this->sharedState.controllerTemp) {
             this->current_temperature = this->sharedState.controllerTemp;
             updated = true;
         }
 
         // Target temp
-        if (this->sharedState.temperature != this->target_temperature) {
+        if (!(holdFields & kTempUpdateMask) &&
+            this->sharedState.temperature != this->target_temperature) {
             ESP_LOGD("fuji", "ctrl temp %d vs my temp %d",
                      this->sharedState.temperature, this->target_temperature);
             this->target_temperature = this->sharedState.temperature;
@@ -204,53 +215,60 @@ void FujitsuClimate::updateState() {
         }
 
         // Mode
-        auto newMode = fujiToEspMode((FujiMode)this->sharedState.acMode);
-        if (newMode.has_value() && this->sharedState.onOff &&
-            newMode.value() != this->mode) {
-            ESP_LOGD("fuji", "ctrl mode %d vs my mode %d", newMode.value(),
-                     this->mode);
-            this->mode = newMode.value();
-            updated = true;
+        if (!(holdFields & (kModeUpdateMask | kOnOffUpdateMask))) {
+            auto newMode = fujiToEspMode((FujiMode)this->sharedState.acMode);
+            if (newMode.has_value() && this->sharedState.onOff &&
+                newMode.value() != this->mode) {
+                ESP_LOGD("fuji", "ctrl mode %d vs my mode %d", newMode.value(),
+                         this->mode);
+                this->mode = newMode.value();
+                updated = true;
+            }
+            
+            if (!this->sharedState.onOff &&
+                this->mode != climate::ClimateMode::CLIMATE_MODE_OFF) {
+                ESP_LOGD("fuji",
+                         "Controller turned off AC, adding mode change to call");
+                this->mode = climate::ClimateMode::CLIMATE_MODE_OFF;
+                updated = true;
+            }
         }
 
         // Fan speed
-        auto newFanMode =
-            fujiToEspFanMode((FujiFanMode)this->sharedState.fanMode);
-        if (newFanMode.has_value() && newFanMode.value() != this->fan_mode) {
-            ESP_LOGD("fujitsu", "ctrl fan mode %d vs my fan mode %d",
-                     static_cast<int>(newFanMode.value()),
-                     this->fan_mode.has_value() ? static_cast<int>(this->fan_mode.value()) : -1);
-            this->fan_mode = newFanMode.value();
-            updated = true;
+        if (!(holdFields & kFanModeUpdateMask)) {
+            auto newFanMode =
+                fujiToEspFanMode((FujiFanMode)this->sharedState.fanMode);
+            if (newFanMode.has_value() && newFanMode.value() != this->fan_mode) {
+                ESP_LOGD("fujitsu", "ctrl fan mode %d vs my fan mode %d",
+                         static_cast<int>(newFanMode.value()),
+                         this->fan_mode.has_value() ? static_cast<int>(this->fan_mode.value()) : -1);
+                this->fan_mode = newFanMode.value();
+                updated = true;
+            }
         }
 
-        if (this->sharedState.economyMode &&
-            this->preset != climate::ClimatePreset::CLIMATE_PRESET_ECO) {
-            ESP_LOGD("fujitsu",
-                     "ECO mode turned on by controller, adding preset change "
-                     "to call %d ",
-                     this->sharedState.economyMode);
+        if (!(holdFields & kEconomyModeUpdateMask)) {
+            if (this->sharedState.economyMode &&
+                this->preset != climate::ClimatePreset::CLIMATE_PRESET_ECO) {
+                ESP_LOGD("fujitsu",
+                         "ECO mode turned on by controller, adding preset change "
+                         "to call %d ",
+                         this->sharedState.economyMode);
 
-            this->preset = climate::ClimatePreset::CLIMATE_PRESET_ECO;
-            updated = true;
-        } else if (!this->sharedState.economyMode &&
-                   this->preset == climate::ClimatePreset::CLIMATE_PRESET_ECO) {
-            ESP_LOGD("fujitsu",
-                     "ECO mode turned off by controller, adding preset change "
-                     "to call, %d",
-                     this->sharedState.economyMode);
+                this->preset = climate::ClimatePreset::CLIMATE_PRESET_ECO;
+                updated = true;
+            } else if (!this->sharedState.economyMode &&
+                       this->preset == climate::ClimatePreset::CLIMATE_PRESET_ECO) {
+                ESP_LOGD("fujitsu",
+                         "ECO mode turned off by controller, adding preset change "
+                         "to call, %d",
+                         this->sharedState.economyMode);
 
-            this->preset = climate::ClimatePreset::CLIMATE_PRESET_NONE;
-            updated = true;
+                this->preset = climate::ClimatePreset::CLIMATE_PRESET_NONE;
+                updated = true;
+            }
         }
 
-        if (!this->sharedState.onOff &&
-            this->mode != climate::ClimateMode::CLIMATE_MODE_OFF) {
-            ESP_LOGD("fuji",
-                     "Controller turned off AC, adding mode change to call");
-            this->mode = climate::ClimateMode::CLIMATE_MODE_OFF;
-            updated = true;
-        }
         xSemaphoreGive(this->lock);
     }
 
@@ -277,6 +295,72 @@ void FujitsuClimate::updateState() {
 }
 
 void FujitsuClimate::loop() { this->updateState(); }
+
+void FujitsuClimate::startRetry(byte fields) {
+    memcpy(&this->retryState_, &this->sharedState, sizeof(FujiFrame));
+    this->retryFields_ = fields;
+    this->retryCount_ = 0;
+    this->retryRequestTime_ = millis();
+    this->retryLastAttempt_ = millis();
+    this->retryActive_ = true;
+    ESP_LOGD("fuji", "Retry: tracking fields=0x%02X", fields);
+}
+
+void FujitsuClimate::checkRetry() {
+    if (!this->retryActive_ || this->pendingUpdate) return;
+    
+    // Wait at least kRetryIntervalMs since last attempt
+    if (millis() - this->retryLastAttempt_ < kRetryIntervalMs) return;
+    
+    // Check if the values we wanted are now reflected in the unit's state
+    bool matched = true;
+    if (xSemaphoreTake(this->lock, TickType_t(200)) == pdTRUE) {
+        if ((this->retryFields_ & kTempUpdateMask) && 
+            this->sharedState.temperature != this->retryState_.temperature) {
+            matched = false;
+        }
+        if ((this->retryFields_ & kModeUpdateMask) && 
+            this->sharedState.acMode != this->retryState_.acMode) {
+            matched = false;
+        }
+        if ((this->retryFields_ & kOnOffUpdateMask) && 
+            this->sharedState.onOff != this->retryState_.onOff) {
+            matched = false;
+        }
+        if ((this->retryFields_ & kFanModeUpdateMask) && 
+            this->sharedState.fanMode != this->retryState_.fanMode) {
+            matched = false;
+        }
+        if ((this->retryFields_ & kEconomyModeUpdateMask) && 
+            this->sharedState.economyMode != this->retryState_.economyMode) {
+            matched = false;
+        }
+        if ((this->retryFields_ & kSwingModeUpdateMask) && 
+            this->sharedState.swingMode != this->retryState_.swingMode) {
+            matched = false;
+        }
+        
+        if (matched) {
+            ESP_LOGI("fuji", "Retry: change confirmed by unit after %d attempt(s)", 
+                     this->retryCount_);
+            this->retryActive_ = false;
+        } else if (this->retryCount_ >= kMaxRetries) {
+            ESP_LOGW("fuji", "Retry: giving up after %d attempts, unit rejected change", 
+                     kMaxRetries);
+            this->retryActive_ = false;
+        } else {
+            // Re-apply the desired values
+            this->retryCount_++;
+            this->retryLastAttempt_ = millis();
+            memcpy(&this->sharedState, &this->retryState_, sizeof(FujiFrame));
+            this->heatPump.setState(&this->sharedState);
+            this->pendingUpdate = true;
+            ESP_LOGW("fuji", "Retry: attempt %d/%d, re-sending fields=0x%02X", 
+                     this->retryCount_, kMaxRetries, this->retryFields_);
+        }
+        xSemaphoreGive(this->lock);
+    }
+}
 
 void FujitsuClimate::control(const climate::ClimateCall &call) {
     if (xSemaphoreTake(this->lock, 1000) == pdTRUE) {
@@ -336,6 +420,8 @@ void FujitsuClimate::control(const climate::ClimateCall &call) {
             this->pendingUpdate = true;
             // Publish immediately so HA logs the change in the activity feed
             this->publish_state();
+            // Start retry tracking with the desired values
+            this->startRetry(this->heatPump.getUpdateFields());
         }
         xSemaphoreGive(this->lock);
     }
