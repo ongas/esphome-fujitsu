@@ -14,7 +14,7 @@ FujiFrame FujiHeatPump::decodeFrame()
 
     ff.messageSource = readBuf[0];
     ff.messageDest = readBuf[1] & 0b01111111;
-    ff.messageType = (readBuf[2] & 0b00110000) >> 4;
+    ff.messageType = (readBuf[2] & 0b01110000) >> 4;
 
     ff.acError = (readBuf[kErrorIndex] & kErrorMask) >> kErrorOffset;
     ff.temperature =
@@ -38,6 +38,109 @@ FujiFrame FujiHeatPump::decodeFrame()
     ff.unknownBit = (readBuf[1] & 0b10000000) > 0;
 
     return ff;
+}
+
+void FujiHeatPump::decodeHeader(byte *buf, byte &src, byte &dst, byte &type,
+                                 bool &writeBit, bool &loginBit, bool &unknownBit) {
+    src = buf[0];
+    dst = buf[1] & 0b01111111;
+    type = (buf[2] & 0b01110000) >> 4;
+    writeBit = (buf[2] & 0b00001000) != 0;
+    loginBit = (buf[1] & 0b00100000) != 0;
+    unknownBit = (buf[1] & 0b10000000) > 0;
+}
+
+void FujiHeatPump::encodeHeader(byte *buf, byte src, byte dst, byte type,
+                                 bool writeBit, bool loginBit, bool unknownBit) {
+    buf[0] = src;
+    buf[1] = (dst & 0b01111111);
+    if (unknownBit) buf[1] |= 0b10000000;
+    if (loginBit)   buf[1] |= 0b00100000;
+    buf[2] = (type << 4);
+    if (writeBit) buf[2] |= 0b00001000;
+}
+
+ZoneFrame FujiHeatPump::decodeZoneFrame() {
+    ZoneFrame zf;
+    zf.messageSource = readBuf[0];
+    zf.messageDest = readBuf[1] & 0b01111111;
+    zf.messageType = (readBuf[2] & 0b01110000) >> 4;
+    zf.writeBit = (readBuf[2] & 0b00001000) != 0;
+    zf.loginBit = (readBuf[1] & 0b00100000) != 0;
+    zf.unknownBit = (readBuf[1] & 0b10000000) > 0;
+
+    // Decode enabled zones (byte 3, one bit per zone)
+    for (int i = 0; i < (int)kZoneCount; i++) {
+        zf.zones[i] = (readBuf[3] >> i) & 0b00000001;
+    }
+
+    zf.zoneWriteBit = (readBuf[kZoneWriteBitIndex] & kZoneWriteBitMask) >> kZoneWriteBitOffset;
+    zf.zoneGroup = static_cast<FujiZoneGroup>((readBuf[kZoneGroupIndex] & kZoneGroupMask) >> kZoneGroupOffset);
+
+    // Bytes 5-6: day/night zone configs (interleaved, 2 bits per zone)
+    for (int i = 0; i < (int)kZoneCount; i++) {
+        bool zoneEnabled = (readBuf[5] >> i) & 0b00000001;
+        int index = i / 2;
+        if (i % 2 == 0) {
+            zf.dayZones[index] = zoneEnabled;
+        } else {
+            zf.nightZones[index] = zoneEnabled;
+        }
+    }
+    for (int i = 0; i < (int)kZoneCount; i++) {
+        bool zoneEnabled = (readBuf[6] >> i) & 0b00000001;
+        int index = (i + 8) / 2;
+        if ((i + 8) % 2 == 0) {
+            zf.dayZones[index] = zoneEnabled;
+        } else {
+            zf.nightZones[index] = zoneEnabled;
+        }
+    }
+
+    ESP_LOGD("fuji", "Zone decode: zones=%d%d%d%d%d%d%d%d group=%d write=%d",
+             zf.zones[0], zf.zones[1], zf.zones[2], zf.zones[3],
+             zf.zones[4], zf.zones[5], zf.zones[6], zf.zones[7],
+             static_cast<int>(zf.zoneGroup), zf.zoneWriteBit);
+    return zf;
+}
+
+void FujiHeatPump::encodeZoneFrame(ZoneFrame &zf) {
+    memset(zoneWriteBuf, 0, 8);
+
+    encodeHeader(zoneWriteBuf, zf.messageSource, zf.messageDest, zf.messageType,
+                 zf.writeBit, zf.loginBit, zf.unknownBit);
+
+    // Encode zone on/off bits (byte 3)
+    for (int i = 0; i < (int)kZoneCount; i++) {
+        zoneWriteBuf[3] |= zf.zones[i] << i;
+    }
+
+    zoneWriteBuf[kZoneWriteBitIndex] |= zf.zoneWriteBit << kZoneWriteBitOffset;
+    zoneWriteBuf[kZoneGroupIndex] |= static_cast<byte>(zf.zoneGroup) << kZoneGroupOffset;
+
+    // Encode day/night zone configs (bytes 5-6)
+    for (int i = 0; i < (int)kZoneCount; i++) {
+        int index = i / 2;
+        if (i % 2 == 0) {
+            zoneWriteBuf[5] |= zf.dayZones[index] << i;
+        } else {
+            zoneWriteBuf[5] |= zf.nightZones[index] << i;
+        }
+    }
+    for (int i = 0; i < (int)kZoneCount; i++) {
+        int index = (i + 8) / 2;
+        if ((i + 8) % 2 == 0) {
+            zoneWriteBuf[6] |= zf.dayZones[index] << i;
+        } else {
+            zoneWriteBuf[6] |= zf.nightZones[index] << i;
+        }
+    }
+
+    zoneWriteBuf[7] = 0x40;  // fixed value per protocol
+
+    ESP_LOGD("fuji", "Zone encode: %02X %02X %02X %02X %02X %02X %02X %02X",
+             zoneWriteBuf[0], zoneWriteBuf[1], zoneWriteBuf[2], zoneWriteBuf[3],
+             zoneWriteBuf[4], zoneWriteBuf[5], zoneWriteBuf[6], zoneWriteBuf[7]);
 }
 
 void FujiHeatPump::encodeFrame(FujiFrame ff)
@@ -240,6 +343,30 @@ void FujiHeatPump::sendPendingFrame()
     }
 }
 
+void FujiHeatPump::sendPendingZoneFrame()
+{
+    if (pendingZoneFrame && initialZoneStateReceived && !pendingFrame &&
+        (millis() - lastFrameReceived) > 50)
+    {
+        // XOR with 0xFF for wire format
+        for (int i = 0; i < 8; i++) {
+            zoneWriteBuf[i] ^= 0xFF;
+        }
+
+        _serial->write(zoneWriteBuf, 8);
+        _serial->flush();
+        pendingZoneFrame = false;
+        zoneUpdateFields = 0;
+        zoneGroupUpdated = false;
+
+        // Read back echo
+        byte echoBuf[8];
+        int echoBytes = _serial->readBytes(echoBuf, 8);
+
+        ESP_LOGI("fuji", "Zone TX: sent %d echo=%d", 8, echoBytes);
+    }
+}
+
 bool FujiHeatPump::waitForFrame()
 {
     FujiFrame ff;
@@ -258,6 +385,17 @@ bool FujiHeatPump::waitForFrame()
         for (int i = 0; i < 8; i++)
         {
             readBuf[i] ^= 0xFF;
+        }
+
+        // Check message type before full decode — zone frames have different layout
+        byte peekType = (readBuf[2] & 0b01110000) >> 4;
+        if (peekType == static_cast<byte>(FujiMessageType::ZONE)) {
+            lastFrameReceived = millis();
+            ESP_LOGI("fuji", "Zone frame received");
+            ZoneFrame zf = decodeZoneFrame();
+            currentZoneState = zf;
+            initialZoneStateReceived = true;
+            return true;
         }
 
         ff = decodeFrame();
@@ -507,6 +645,50 @@ bool FujiHeatPump::waitForFrame()
             // Use deferred send for all modes — sendPendingFrame() will
             // transmit after a 50ms bus-idle gap (original upstream approach).
             pendingFrame = true;
+
+            // Prepare pending zone frame if zone updates are queued
+            if (zoneUpdateFields || zoneGroupUpdated) {
+                ZoneFrame zf = currentZoneState;
+                zf.zoneWriteBit = true;
+
+                if (zoneGroupUpdated) {
+                    zf.zoneGroup = zoneUpdateState.zoneGroup;
+                } else {
+                    zf.zoneGroup = currentZoneState.zoneGroup;
+                }
+
+                switch (zf.zoneGroup) {
+                    case FujiZoneGroup::NONE:
+                        for (int i = 0; i < (int)kZoneCount; i++) {
+                            if (zoneUpdateFields & (1 << i)) {
+                                zf.zones[i] = zoneUpdateState.zones[i];
+                            } else {
+                                zf.zones[i] = currentZoneState.zones[i];
+                            }
+                        }
+                        break;
+                    case FujiZoneGroup::DAY:
+                        memcpy(zf.zones, zf.dayZones, kZoneCount);
+                        break;
+                    case FujiZoneGroup::NIGHT:
+                        memcpy(zf.zones, zf.nightZones, kZoneCount);
+                        break;
+                    case FujiZoneGroup::ALL:
+                        for (int i = 0; i < (int)kZoneCount; i++) {
+                            zf.zones[i] = true;
+                        }
+                        break;
+                }
+
+                zf.messageSource = controllerAddress;
+                zf.messageDest = static_cast<byte>(FujiAddress::UNIT);
+                zf.messageType = static_cast<byte>(FujiMessageType::ZONE);
+                zf.loginBit = false;
+                zf.unknownBit = true;
+                zf.writeBit = true;
+                encodeZoneFrame(zf);
+                pendingZoneFrame = true;
+            }
         }
         else if (ff.messageDest ==
                  static_cast<byte>(FujiAddress::SECONDARY))
@@ -647,6 +829,26 @@ void FujiHeatPump::setState(FujiFrame *state)
 }
 
 byte FujiHeatPump::getUpdateFields() { return updateFields; }
+
+void FujiHeatPump::setZoneOnOff(int zone, bool o) {
+    if (zone < 0 || zone >= (int)kZoneCount) return;
+    zoneUpdateFields |= (1 << zone);
+    zoneUpdateState.zones[zone] = o;
+}
+
+void FujiHeatPump::setZoneGroup(FujiZoneGroup zoneGroup) {
+    zoneGroupUpdated = true;
+    zoneUpdateState.zoneGroup = zoneGroup;
+}
+
+bool FujiHeatPump::getZoneOnOff(int zone) {
+    if (zone < 0 || zone >= (int)kZoneCount) return false;
+    return currentZoneState.zones[zone];
+}
+
+FujiZoneGroup FujiHeatPump::getZoneGroup() { return currentZoneState.zoneGroup; }
+
+ZoneFrame *FujiHeatPump::getCurrentZoneState() { return &currentZoneState; }
 
 }  // namespace fujitsu
 }  // namespace esphome
