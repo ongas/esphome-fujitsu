@@ -50,17 +50,6 @@ const byte kControllerTempIndex = 6;
 const byte kControllerTempMask = 0b01111110;
 const byte kControllerTempOffset = 1;
 
-// Zone frame constants
-const byte kZoneGroupIndex = 4;
-const byte kZoneGroupMask = 0b00011000;
-const byte kZoneGroupOffset = 3;
-
-const byte kZoneWriteBitIndex = 4;
-const byte kZoneWriteBitMask = 0b10000000;
-const byte kZoneWriteBitOffset = 7;
-
-const size_t kZoneCount = 8;
-
 typedef struct FujiFrames {
     byte onOff = 0;
     byte temperature = 16;
@@ -83,34 +72,11 @@ typedef struct FujiFrames {
     byte messageDest = 0;
 } FujiFrame;
 
-enum class FujiZoneGroup : byte {
-    NONE = 0x0,
-    DAY = 0x1,
-    NIGHT = 0x2,
-    ALL = 0x3,
-};
-
-typedef struct ZoneFrames {
-    byte messageSource = 0;
-    byte messageDest = 0;
-    byte messageType = 0;
-    bool writeBit = false;
-    bool loginBit = false;
-    bool unknownBit = false;
-
-    bool zones[kZoneCount] = {};
-    FujiZoneGroup zoneGroup = FujiZoneGroup::NONE;
-    bool zoneWriteBit = false;
-    bool dayZones[kZoneCount] = {};
-    bool nightZones[kZoneCount] = {};
-} ZoneFrame;
-
 class FujiHeatPump {
    private:
     HardwareSerial *_serial;
     byte readBuf[8];
     byte writeBuf[8];
-    byte zoneWriteBuf[8];
 
     byte controllerAddress;
     bool controllerIsPrimary = true;
@@ -119,25 +85,14 @@ class FujiHeatPump {
     unsigned long lastFrameReceived;
 
     byte updateFields;
-    byte zoneUpdateFields = 0;
-    bool zoneGroupUpdated = false;
     FujiFrame updateState;
-    ZoneFrame zoneUpdateState;
     FujiFrame currentState;
-    ZoneFrame currentZoneState;
 
     FujiFrame decodeFrame();
     void encodeFrame(FujiFrame ff);
     void printFrame(byte buf[8], FujiFrame ff);
 
-    void decodeHeader(byte *buf, byte &src, byte &dst, byte &type, bool &writeBit, bool &loginBit, bool &unknownBit);
-    void encodeHeader(byte *buf, byte src, byte dst, byte type, bool writeBit, bool loginBit, bool unknownBit);
-    ZoneFrame decodeZoneFrame();
-    void encodeZoneFrame(ZoneFrame &zf);
-
     bool pendingFrame = false;
-    bool pendingZoneFrame = false;
-    bool initialZoneStateReceived = false;
     
     // Auto-login: inject SECONDARY login after seeing bus activity
     bool autoLoginPending = false;
@@ -181,7 +136,6 @@ class FujiHeatPump {
 
     bool waitForFrame();
     void sendPendingFrame();
-    void sendPendingZoneFrame();
     bool isBound();
     bool updatePending();
 
@@ -193,8 +147,6 @@ class FujiHeatPump {
     void setSwingMode(byte sm);
     void setSwingStep(byte ss);
     void setState(FujiFrame * state);
-    void setZoneOnOff(int zone, bool o);
-    void setZoneGroup(FujiZoneGroup zoneGroup);
 
     bool getOnOff();
     byte getTemp();
@@ -204,9 +156,6 @@ class FujiHeatPump {
     byte getSwingMode();
     byte getSwingStep();
     byte getControllerTemp();
-    bool getZoneOnOff(int zone);
-    FujiZoneGroup getZoneGroup();
-    ZoneFrame *getCurrentZoneState();
 
     FujiFrame *getCurrentState();
     FujiFrame *getUpdateState();

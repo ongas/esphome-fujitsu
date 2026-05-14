@@ -19,16 +19,11 @@ void serialTask(void *pvParameters) {
             frameCount++;
             delay(60);
             climate->heatPump.sendPendingFrame();
-            // Send zone frame after status frame (separate bus-idle gap)
-            delay(60);
-            climate->heatPump.sendPendingZoneFrame();
             climate->pendingUpdate = false;
         }
         if (xSemaphoreTake(climate->lock, (TickType_t)200) == pdTRUE) {
             memcpy(&(climate->sharedState), climate->heatPump.getCurrentState(),
                    sizeof(FujiFrame));
-            memcpy(&(climate->sharedZoneState), climate->heatPump.getCurrentZoneState(),
-                   sizeof(ZoneFrame));
             xSemaphoreGive(climate->lock);
         }
 

@@ -47,27 +47,3 @@ climate:
     nrst_pin: 26
     status_sensor:
       name: "Fujitsu Connection Status"
-    zones:
-      - name: "Zone 1"
-        zone_number: 1
-      - name: "Zone 2"
-        zone_number: 2
-      - name: "Zone 3"
-        zone_number: 3
-      - name: "Zone 4"
-        zone_number: 4
-      - name: "Zone 5"
-        zone_number: 5
-      - name: "Zone 6"
-        zone_number: 6
-      - name: "Zone 7"
-        zone_number: 7
-      - name: "Zone 8"
-        zone_number: 8
-    zone_groups:
-      - name: "Zone Group Day"
-        group_type: DAY
-      - name: "Zone Group Night"
-        group_type: NIGHT
-      - name: "Zone Group All"
-        group_type: ALL
