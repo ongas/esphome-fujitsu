@@ -64,9 +64,18 @@ When `debug: true`, frame data is logged. When `debug: false` (default), debug l
 see `void climate::ClimateTraits FujitsuClimate::traits()` in `FujitsuClimate.cpp` for more details,
 modify the function to suit your unit.
 
+## SECONDARY controller registration (important):
+
+The ESP32 registers as a SECONDARY controller (address 33) alongside an existing PRIMARY wired controller (address 32). Key things to know:
+
+* **After an OTA update**, you must **power-cycle the AC unit** (not just the ESP) for the SECONDARY to re-register. The unit only accepts SECONDARY registration during a fresh boot sequence.
+* **TX timing is critical**: the SECONDARY response uses deferred TX with a 60ms delay + 50ms bus-idle check (`sendPendingFrame()`). Immediate TX (1ms after probe) does NOT work — the unit ignores responses that arrive too quickly after the probe.
+* **Status display**: "Connected (Read-Write)" means the unit has accepted the SECONDARY registration (`cP=1` in incoming probes). If `cP` stays at 0, the unit is ignoring our responses and any changes from HA will revert.
+* **Bus protocol**: 500 baud, 8E1, half-duplex via LIN transceiver. Each 8-byte frame takes 176ms to transmit. The bus cycle is ~850ms.
+
 ## Known issues:
-* Sometimes a command is sent but somehow it fails to control the unit, I would have to resend the command from Home Assistant
 * Setting ECO mode from Home Assistant does not work, but receiving ECO mode change from the controller is fine
+* After ESP OTA updates, the AC unit must be power-cycled for write control to resume
 
 ## Planned work:
 * Make traits configurable through the yaml config file
