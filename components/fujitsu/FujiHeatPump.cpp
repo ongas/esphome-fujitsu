@@ -3,6 +3,7 @@
 // #define DEBUG_FUJI
 #include "FujiHeatPump.h"
 #include "esphome/core/log.h"
+#include "driver/uart.h"  // ESP-IDF UART for explicit pin mapping
 
 namespace esphome {
 namespace fujitsu {
@@ -116,6 +117,11 @@ void FujiHeatPump::connect(HardwareSerial *serial, bool secondary,
     {
 #ifdef ESP32
         _serial->begin(500, SERIAL_8E1, rxPin, txPin);
+        
+        // Force TX pin mapping via ESP-IDF — Arduino Core 3.x may not
+        // route the TX pin correctly on Serial2.
+        esp_err_t err = uart_set_pin(UART_NUM_2, txPin, rxPin, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
+        ESP_LOGW("fuji", "uart_set_pin(TX=%d, RX=%d) = %s", txPin, rxPin, esp_err_to_name(err));
 #else
         Serial.print("Setting RX/TX pin unsupported, using defaults.\n");
         _serial->begin(500, SERIAL_8E1);
@@ -159,8 +165,14 @@ void FujiHeatPump::sendPendingFrame()
 {
     if (pendingFrame && (millis() - lastFrameReceived) > 50)
     {
+        // Save TX bytes for echo comparison
+        byte txCopy[8];
+        memcpy(txCopy, writeBuf, 8);
+        
+        unsigned long txStart = millis();
         _serial->write(writeBuf, 8);
         _serial->flush();
+        unsigned long txEnd = millis();
         pendingFrame = false;
         updateFields = 0;
         
@@ -168,9 +180,33 @@ void FujiHeatPump::sendPendingFrame()
         responseSentCount++;
         responseSentMs = millis();
 
-        _serial->readBytes(
-            writeBuf,
-            8); // read back our own frame so we dont process it again
+        // Read echo into separate buffer and verify
+        byte echoBuf[8];
+        memset(echoBuf, 0, 8);
+        int echoBytes = _serial->readBytes(echoBuf, 8);
+        unsigned long echoEnd = millis();
+        
+        // Compare echo with what we sent
+        bool echoMatch = (echoBytes == 8);
+        if (echoMatch) {
+            for (int i = 0; i < 8; i++) {
+                if (echoBuf[i] != txCopy[i]) {
+                    echoMatch = false;
+                    break;
+                }
+            }
+        }
+        
+        lastEchoCount = echoBytes;
+        if (echoMatch) lastEchoMatch = true;
+        
+        // Log every 50th TX or if echo mismatch
+        if (!echoMatch || (responseSentCount % 50 == 1)) {
+            ESP_LOGW("fuji", "TX: sent=%02X %02X %02X %02X %02X %02X %02X %02X echo=%02X %02X %02X %02X %02X %02X %02X %02X echoBytes=%d match=%d txMs=%lu-%lu echoMs=%lu",
+                txCopy[0], txCopy[1], txCopy[2], txCopy[3], txCopy[4], txCopy[5], txCopy[6], txCopy[7],
+                echoBuf[0], echoBuf[1], echoBuf[2], echoBuf[3], echoBuf[4], echoBuf[5], echoBuf[6], echoBuf[7],
+                echoBytes, echoMatch ? 1 : 0, txStart, txEnd, echoEnd);
+        }
     }
     
     // Auto-login injection: send SECONDARY login after bus goes idle
@@ -468,33 +504,9 @@ bool FujiHeatPump::waitForFrame()
                 writeBuf[i] ^= 0xFF;
             }
 
-            // SECONDARY mode: send response IMMEDIATELY (no delay)
-            // On the half-duplex bus, our time slot comes right after the probe.
-            // The 60ms delay + 50ms idle check in sendPendingFrame() is too late.
-            if (!controllerIsPrimary) {
-                ESP_LOGW("fuji", ">>> TX IMMEDIATE: src=%d dst=%d type=%d cP=%d login=%d uM=%d TX=%02X %02X %02X %02X %02X %02X %02X %02X @%lums",
-                    ff.messageSource, ff.messageDest, ff.messageType,
-                    ff.controllerPresent, ff.loginBit, ff.updateMagic,
-                    writeBuf[0], writeBuf[1], writeBuf[2], writeBuf[3], writeBuf[4], writeBuf[5], writeBuf[6], writeBuf[7],
-                    millis());
-                
-                _serial->write(writeBuf, 8);
-                _serial->flush();
-                pendingFrame = false;
-                updateFields = 0;
-                responseSentCount++;
-                responseSentMs = millis();
-                
-                // Drain any echo bytes without blocking on a full 8-byte read
-                // (the 200ms blocking readback was eating follow-up bus frames)
-                unsigned long drainStart = millis();
-                while (_serial->available() && (millis() - drainStart) < 50) {
-                    _serial->read();
-                }
-            } else {
-                // PRIMARY mode: use deferred send (original behavior)
-                pendingFrame = true;
-            }
+            // Use deferred send for all modes — sendPendingFrame() will
+            // transmit after a 50ms bus-idle gap (original upstream approach).
+            pendingFrame = true;
         }
         else if (ff.messageDest ==
                  static_cast<byte>(FujiAddress::SECONDARY))

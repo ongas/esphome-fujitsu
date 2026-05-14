@@ -119,12 +119,20 @@ class FujiHeatPump {
     unsigned long probeReceivedMs = 0;
     unsigned long responseSentCount = 0;
     unsigned long responseSentMs = 0;
+    int lastEchoCount = -1;  // -1 = no TX yet, 0-8 = echo bytes received
+    bool lastEchoMatch = false;
+    bool firstSecondaryResponse = true; // track first response for uM=2
+    int updateRetryCount = 0; // how many frames we've sent writeBit=1 without ACK
+    bool frameSynced = false; // true after detecting inter-frame gap at boot
+    int bootQuietCount = 0;   // probes to observe silently before responding
+    int enPin = -1;           // LIN transceiver EN pin (enabled after frame sync)
     
     // Enable/disable auto-login injection (disabled: unsolicited frames don't work)
     bool autoLoginEnabled = false;
 
     void connect(HardwareSerial *serial, bool secondary);
     void connect(HardwareSerial *serial, bool secondary, int rxPin, int txPin);
+    void connect(HardwareSerial *serial, bool secondary, int rxPin, int txPin, int enPin);
 
     bool waitForFrame();
     void sendPendingFrame();

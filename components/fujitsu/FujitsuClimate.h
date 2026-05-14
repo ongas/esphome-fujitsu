@@ -14,6 +14,7 @@ class FujitsuClimate : public climate::Climate, public Component {
     void loop() override;
     void control(const climate::ClimateCall &call) override;
     climate::ClimateTraits traits() override;
+    void on_shutdown() override;
     TaskHandle_t taskHandle;
     FujiHeatPump heatPump;
     FujiFrame sharedState;

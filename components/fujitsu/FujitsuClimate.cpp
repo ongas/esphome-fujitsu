@@ -39,12 +39,13 @@ void serialTask(void *pvParameters) {
                          i > 0 ? " " : "", p.src, p.dst, p.type, p.cP, p.count);
                 strncat(patterns, tmp, sizeof(patterns) - strlen(patterns) - 1);
             }
-            ESP_LOGW("fuji", "DIAG: frames=%u dst:P=%lu/S=%lu/O=%lu bound=%d probe=%lu@%lums resp=%lu@%lums patterns=[%s]",
+            ESP_LOGW("fuji", "DIAG: frames=%u dst:P=%lu/S=%lu/O=%lu bound=%d probe=%lu@%lums resp=%lu@%lums echo=%d/match=%d patterns=[%s]",
                      frameCount,
                      climate->heatPump.frameDestPrimary, climate->heatPump.frameDestSecondary, climate->heatPump.frameDestOther,
                      climate->heatPump.isBound() ? 1 : 0,
                      climate->heatPump.probeReceivedCount, climate->heatPump.probeReceivedMs,
                      climate->heatPump.responseSentCount, climate->heatPump.responseSentMs,
+                     climate->heatPump.lastEchoCount, climate->heatPump.lastEchoMatch ? 1 : 0,
                      patterns);
             lastDiag = millis();
         }
@@ -60,24 +61,45 @@ void FujitsuClimate::setup() {
     memcpy(&(this->sharedState), this->heatPump.getCurrentState(),
            sizeof(FujiFrame));
 
-    // Drive LIN transceiver EN and NRST pins HIGH if configured
-    if (this->en_pin_ != -1) {
-        pinMode(this->en_pin_, OUTPUT);
-        digitalWrite(this->en_pin_, HIGH);
-        ESP_LOGD("fuji", "EN pin %d set HIGH", this->en_pin_);
-    }
+    // Drive LIN transceiver NRST pin HIGH if configured
     if (this->nrst_pin_ != -1) {
         pinMode(this->nrst_pin_, OUTPUT);
         digitalWrite(this->nrst_pin_, HIGH);
         ESP_LOGD("fuji", "NRST pin %d set HIGH", this->nrst_pin_);
     }
-    // Allow LIN transceiver time to stabilize after enable
+
+    // Enable LIN transceiver
+    if (this->en_pin_ != -1) {
+        pinMode(this->en_pin_, OUTPUT);
+        digitalWrite(this->en_pin_, HIGH);
+        ESP_LOGD("fuji", "EN pin %d set HIGH", this->en_pin_);
+    }
     delay(10);
 
     this->heatPump.connect(&Serial2, true, this->rx_pin_, this->tx_pin_);
     ESP_LOGD("fuji", "starting task");
     xTaskCreatePinnedToCore(serialTask, "FujiTask", 10000, (void *)this,
                             configMAX_PRIORITIES - 1, &(this->taskHandle), 1);
+}
+
+void FujitsuClimate::on_shutdown() {
+    // Log shutdown to HA activity feed via status sensor
+    if (this->status_sensor_ != nullptr) {
+        this->status_sensor_->publish_state("Shutting down...");
+    }
+
+    // Disable LIN transceiver before OTA reboot so the UNIT sees
+    // SECONDARY go silent during the entire upload + reboot cycle.
+    // This allows the UNIT to de-register SECONDARY and accept a
+    // fresh login after the ESP comes back up.
+    if (this->en_pin_ != -1) {
+        digitalWrite(this->en_pin_, LOW);
+        ESP_LOGW("fuji", "SHUTDOWN: LIN transceiver disabled (EN pin %d LOW)", this->en_pin_);
+    }
+    if (this->taskHandle != nullptr) {
+        vTaskDelete(this->taskHandle);
+        this->taskHandle = nullptr;
+    }
 }
 
 optional<climate::ClimateMode> FujitsuClimate::fujiToEspMode(
@@ -270,17 +292,20 @@ void FujitsuClimate::control(const climate::ClimateCall &call) {
                 if (callMode != climate::ClimateMode::CLIMATE_MODE_OFF) {
                     this->sharedState.onOff = 1;
                 }
+                this->mode = callMode;
                 updated = true;
             }
 
             if (callMode == climate::ClimateMode::CLIMATE_MODE_OFF) {
                 this->sharedState.onOff = 0;
+                this->mode = climate::ClimateMode::CLIMATE_MODE_OFF;
                 updated = true;
             }
         }
         if (call.get_target_temperature().has_value()) {
             auto callTargetTemp = call.get_target_temperature().value();
             this->sharedState.temperature = callTargetTemp;
+            this->target_temperature = callTargetTemp;
             updated = true;
             ESP_LOGD("fuji", "Fuji setting temperature %f", callTargetTemp);
         }
@@ -290,6 +315,7 @@ void FujitsuClimate::control(const climate::ClimateCall &call) {
             this->sharedState.economyMode = static_cast<byte>(
                 callPreset == climate::ClimatePreset::CLIMATE_PRESET_ECO ? 1
                                                                          : 0);
+            this->preset = callPreset;
             updated = true;
             ESP_LOGD("fuji", "Fuji setting preset %d", callPreset);
         }
@@ -301,12 +327,15 @@ void FujitsuClimate::control(const climate::ClimateCall &call) {
                 this->heatPump.setFanMode(
                     static_cast<byte>(fujiFanMode.value()));
             }
+            this->fan_mode = callFanMode;
             updated = true;
             ESP_LOGD("fuji", "Fuji setting fan mode %d", this->fan_mode);
         }
         if (updated) {
             this->heatPump.setState(&(this->sharedState));
             this->pendingUpdate = true;
+            // Publish immediately so HA logs the change in the activity feed
+            this->publish_state();
         }
         xSemaphoreGive(this->lock);
     }
