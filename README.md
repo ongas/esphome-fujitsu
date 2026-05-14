@@ -68,14 +68,17 @@ modify the function to suit your unit.
 
 The ESP32 registers as a SECONDARY controller (address 33) alongside an existing PRIMARY wired controller (address 32). Key things to know:
 
-* **After an OTA update**, you must **power-cycle the AC unit** (not just the ESP) for the SECONDARY to re-register. The unit only accepts SECONDARY registration during a fresh boot sequence.
+* **OTA updates** are seamless — the SECONDARY re-registers automatically after an OTA reboot without needing to power-cycle the AC unit.
 * **TX timing is critical**: the SECONDARY response uses deferred TX with a 60ms delay + 50ms bus-idle check (`sendPendingFrame()`). Immediate TX (1ms after probe) does NOT work — the unit ignores responses that arrive too quickly after the probe.
 * **Status display**: "Connected (Read-Write)" means the unit has accepted the SECONDARY registration (`cP=1` in incoming probes). If `cP` stays at 0, the unit is ignoring our responses and any changes from HA will revert.
 * **Bus protocol**: 500 baud, 8E1, half-duplex via LIN transceiver. Each 8-byte frame takes 176ms to transmit. The bus cycle is ~850ms.
 
+## Write retry mechanism:
+
+When you change a setting in Home Assistant (temperature, mode, fan speed, etc.), the ESP holds the desired value in the UI for a 2-second grace period before checking whether the unit has accepted the change. If the unit hasn't confirmed the new value, it automatically retries up to 5 times (10 seconds total). This prevents the UI from "bouncing" back to the old value while the unit is processing the write.
+
 ## Known issues:
 * Setting ECO mode from Home Assistant does not work, but receiving ECO mode change from the controller is fine
-* After ESP OTA updates, the AC unit must be power-cycled for write control to resume
 
 ## Planned work:
 * Make traits configurable through the yaml config file
