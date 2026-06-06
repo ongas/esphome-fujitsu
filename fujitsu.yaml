@@ -14,9 +14,6 @@ external_components:
 
 # Enable logging
 logger:
-  level: DEBUG
-  logs:
-    fuji: DEBUG
 
 # Enable Home Assistant API
 api:
