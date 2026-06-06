@@ -1,0 +1,1 @@
+esphome logs fujitsu.yaml --device=192.168.0.189

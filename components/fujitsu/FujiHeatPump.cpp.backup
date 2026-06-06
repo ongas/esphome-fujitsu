@@ -137,8 +137,7 @@ void FujiHeatPump::connect(HardwareSerial *serial, bool secondary,
     {
         controllerIsPrimary = false;
         controllerAddress = static_cast<byte>(FujiAddress::SECONDARY);
-        autoLoginEnabled = true;
-        ESP_LOGW("fuji", "=== SECONDARY mode (addr 33) at %lums: autoLogin ENABLED, waiting for PRIMARY probe ===", millis());
+        ESP_LOGW("fuji", "=== SECONDARY mode (addr 33) at %lums: waiting for PRIMARY probe ===", millis());
     }
     else
     {
@@ -232,14 +231,12 @@ void FujiHeatPump::sendPendingFrame()
         for (int i = 0; i < 8; i++) {
             writeBuf[i] ^= 0xFF;
         }
-        size_t written = _serial->write(writeBuf, 8);
+        _serial->write(writeBuf, 8);
         _serial->flush();
-        byte echoFrame[8] = {0};
-        int echoBytes = _serial->readBytes(echoFrame, 8);
-        bool echoOK = (echoBytes == 8) && (writeBuf[0] == echoFrame[0]) && (writeBuf[1] == echoFrame[1]);
+        _serial->readBytes(writeBuf, 8);  // read back our own frame
         
-        ESP_LOGW("fuji", ">>> AUTO-LOGIN #%lu TX=%u RX=%d echo=%s", 
-                 autoLoginCount, written, echoBytes, echoOK ? "OK" : "FAIL");
+        ESP_LOGW("fuji", ">>> AUTO-LOGIN #%lu sent (SECONDARY→UNIT STATUS cP=1) uptime=%lu", 
+                 autoLoginCount, millis());
     }
 }
 

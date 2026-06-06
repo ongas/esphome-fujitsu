@@ -1,0 +1,1494 @@
+Data Sheet 1 Rev. 1.1
+www.infineon.com/Automotive-Transceivers  2018-10-15
+TLE8457C / TLE8457D
+LIN Transceiver with inte grated voltage regulator
+1 Overview
+Features
+• Single-wire LIN transceiver for transmission rates up to 20 kBit/s
+• Compliant to ISO 17987-4, LIN specification 2.2 A and SAE J2602
+• 5 V or 3.3 V low drop-out linear vo ltage regulator with 70 mA current 
+capability
+• Stable with ceramic output capacitor of 1 µF
+• Ultra low current consumption in sleep mode of max. 16 µA
+• Ultra low current consumption in  standby mode of typical 20 µA
+• Very low leakage current on the BUS pin
+• V
+CC undervoltage detection with RESET output
+• TxD protected with dominant time-out function
+• BUS short to V
+BAT protection and BUS short to GND handling
+• Overtemperature protection and supply undervoltage detection
+• Very high ESD robustness: ±8 kV according to IEC61000-4-2
+• Optimized for high electrom agnetic compatibility (EMC);
+Very low emission and high immunity to interference
+• Available in standa rd PG-DSO-8 and leadless PG-TSON-8 packages
+• PG-TSON-8 package supports auto mated optical inspection (AOI)
+• Green Product (RoHS compliant)
+Potential applications
+• LIN slave satellite modules
+•W i n d o w  l i f t e r s
+• Rain and light sensors
+• Sun roof control modules
+•W i p e r  m o d u l e s
+• Ambient lighting
+
+Data Sheet 2 Rev. 1.1
+ 2018-10-15
+TLE8457C / TLE8457D
+LIN Transceiver with integrated voltage regulator
+Overview
+Product validation
+Qualified for automotive applications. Product validation according to AEC-Q100.
+Description
+The TLE8457C / TLE8457D is a monolithic integrated LIN transceiver and low drop-out voltage regulator. The
+device is designed to supply a microcontroller and peripherals with up to 70 mA, provide protection through
+V
+CC undervoltage reset, while also offering bi-directi onal bus communication comp liant to LIN specification
+2.2 A and SAE J2602. With the ultra low quiescent curren t consumption of typical 20 µA in standby mode the
+TLE8457C / TLE8457D is especially suited for applications that are permanently supplied by the battery.
+Based on the Infineon BiCMOS technology the TL E8457C / TLE8457D provide excellent ESD robustness
+together with a very high leve l of electromagnetic compatibilit y (EMC). The TLE8457C / TLE8457D is
+AEC qualified and tailored to withstand the harsh conditions of the automotive environment.
+Type LDO VCC output 
+voltage
+Package Marking Init timeout 
+feature1)
+1) “Init timeout feature” is only available with TLE8457A & TLE8457B.
+TLE8457CSJ 5 V PG-DSO-8 8457C No
+TLE8457CLE 5 V PG-TSON-8 8457C No
+TLE8457DSJ 3.3 V PG-DSO-8 8457D No
+TLE8457DLE 3.3 V PG-TSON-8 8457D No
+Data Sheet 3 Rev. 1.1
+ 2018-10-15
+TLE8457C / TLE8457D
+LIN Transceiver with integrated voltage regulator
+1 Overview . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  . . . . . . . . . . . . .  1
+Features  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  . . . . . . . . . . . . .  1
+Potential applications . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  1
+Product validation . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  2
+Description . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  . . . . . . . . . . . .  2
+Table of contents . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  . . . . . . . . . .  3
+2 Block diagram  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  . . . . . . . . . . .  4
+3 Pin configuration . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  5
+3.1 Pin assignment . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  . . . . . . . . . . . . . . . . . . . .  5
+3.2 Pin definitions and functions  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  . . . . . . . . . . . . . . .  5
+4 Functional description  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  6
+4.1 Operating modes  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  . . . . . . . . . . . . . . . . . . .  6
+4.1.1 Normal operation mode  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  . . . . . . . . . . . . . . .  8
+4.1.2 Standby mode . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  . . . . . . . . . . . . . . . . . . .  8
+4.1.3 Sleep mode  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  10
+4.1.4 Bus wake-up event . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  10
+4.1.5 Mode transition via EN pin  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  11
+4.2 Power supplies . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  . . . . . . . . . . . . . . . . . . .  11
+4.2.1 Power-up and power-down . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  11
+4.2.2 VS undervoltage detection  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  . . . . . . . . . .  13
+4.3 Voltage regulator  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  . . . . . . . . . . . . . . . . . . .  14
+4.3.1 VCC undervoltage detection  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  14
+4.3.2 Reset output  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  14
+4.4 LIN transceiver  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  . . . . . . . . . . . . . . . . . . . .  15
+4.4.1 TxD time-out  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  16
+4.4.2 Short-circuit . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  16
+4.5 Overtemperature protection . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  . . . . . . . . . . . . .  16
+5 General product characteristics  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  . . . .  17
+5.1 Absolute maximum ratings  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  17
+5.2 Functional range  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  18
+5.3 Thermal characteristics  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  . . . . . . . . . . . . . . . .  19
+6 Electrical characteristics  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  20
+6.1 Functional device characteristics . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  20
+6.2 Diagrams  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  26
+7 Application information  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  . . . . . . .  27
+7.1 Application example  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  . . . . . . . . . . . . . . . . .  27
+7.2 ESD robustness according to  IEC61000-4-2 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  . . . . . . .  28
+7.3 Transient robustness according to ISO 7637-2  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  28
+7.4 LIN physical layer compatibility  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  28
+8 Package information . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  29
+9 Revision history . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  . . . . . . . . . .  30
+Table of contents
+Data Sheet 4 Rev. 1.1
+ 2018-10-15
+TLE8457C / TLE8457D
+LIN Transceiver with integrated voltage regulator
+Block diagram
+2 Block diagram
+Figure 1   Block diagram
+Control
+BUS
+TxD
+EN
+VS
+Rslave
+REN
+VCC
+1
+8
+Wake 
+Receiver
+Over-Temperature 
+and Over-Current
+Protection
+4
+Driver
+2
+6
+Transmitter
+Receiver
+RxDRF-
+Filter
+BUS
+VS / 2
+3
+GND
+5
+Linear Regulator
+Driver
+Control
+Time-Out
+VCC Undervoltage 
+Detection
+Supply Monitor
+7
+NRST
+VCC
+VCC
+Current Limitation
+Bandgap
+ Reference
+VCC
+RNRST
+RTxD
+Data Sheet 5 Rev. 1.1
+ 2018-10-15
+TLE8457C / TLE8457D
+LIN Transceiver with integrated voltage regulator
+Pin configuration
+3 Pin configuration
+3.1 Pin assignment
+Figure 2   Pin configuration
+3.2 Pin definitions and functions
+Pin Symbol Function
+1V S Battery supply voltage;
+Decoupling capacitor required
+2E N Enable input;
+Integrated pull-down resistor
+Logic “high” to select normal operation mode
+3G N D Ground
+4B U S BUS input/output;
+Integrated LIN slave termination
+5R x D Receive data output;
+Monitors the LIN bus signal in normal operation mode
+Indicates a wake-up event in standby mode
+6T x D Transmit data input;
+Integrated pull-up resistor
+Logic “low” to drive a dominant signal on the LIN bus
+7N R S T Undervoltage reset output;
+Integrated pull-up resistor
+Logical “low” during reset
+8V C C Voltage regulator output;
+Output capacitor requirements specified in functional device characteristics
+PAD
+1)
+1) Only available with PG-TSON8 package.
+– Connect to PCB heat sink area. Do no t connect to other potential than GND
+1
+2
+3
+45
+6
+7
+8VS 1
+2
+3
+45
+6
+7
+8
+EN
+GND
+BUS
+VCC
+NRST
+TxD
+RxD
+VS
+EN
+GND
+BUS
+VCC
+NRST
+TxD
+RxD
+PG-DSO-8
+PG-TSON-8
+(Top side X-Ray view)
+(PAD)
+Data Sheet 6 Rev. 1.1
+ 2018-10-15
+TLE8457C / TLE8457D
+LIN Transceiver with integrated voltage regulator
+Functional description
+4 Functional description
+4.1 Operating modes
+The operation mode of the TLE8457C / TLE8457D is controlled with the EN and TxD input pins (see Figure 3
+and Table 2). The TLE8457C / TLE8457D has 3 major operation modes:
+• Normal operation mode
+•S t a n d b y  m o d e
+•S l e e p  m o d e
+Figure 3   Operation mode state diagram
+Table 1   Operation mode transitions
+No. Reason for transition Comment
+1P o w e r - o n  d e t e c t i o n T h e  V
+S supply voltage rise above the VS,PON power-on reset level.
+2 Mode change with EN input Trigg ered by logic “high” level. VCC has to be in the functional 
+range.
+3 Mode change with EN and TxD inputs Triggered by lo gic “low” level on EN while TxD is held “high”. 
+VCC has to be in the functional range.
+4 Mode change with EN and TxD inputs Triggered by logic “low” level on EN and TxD. VCC has to be in the 
+functional range.
+5 Mode change with EN input Tri ggered by logic “high” level.
+TLE8457CD_MODE_DIAGRAM
+1) Wake-up Source:
+RxD: logical „high“ after Power-up or transistion with EN input
+RxD: logical „low“ after BUS Wake-up detection
+2) Reset:
+Normal Operation Mode
+LIN transceiver: On
+LDO regulator: On
+EN:  High
+NRST: High2)
+Sleep Mode
+LIN transceiver: Off
+LDO regulator: Off
+EN: Low
+NRST: Low
+BUS Wake-up
+BUS Wake-up
+Power-up
+Standby Mode
+LIN transceiver: Off
+LDO regulator: On
+EN:  Low
+RxD: Wake-up source1) 
+NRST: High2)
+EN
+WHILE
+TxD = 1
+EN
+2
+3
+1
+4
+5
+6
+7
+EN AND TxD
+-  An undervoltage (VCC  < VCC,UV) on VCC is signaled with NRST goes „low“
+-  If NRST is „low“ the transceiver is disabled
+-  NRST will stay „low“ for the time tRST after VCC powered up (VCC > VCC,UV)
+and NRST=1
+and NRST=1
+and NRST=1
+EN
+Data Sheet 7 Rev. 1.1
+ 2018-10-15
+TLE8457C / TLE8457D
+LIN Transceiver with integrated voltage regulator
+Functional description
+6 Bus wake-up detection RxD is set “low” fo r signalling the bus wake-up event to the 
+microcontroller.
+7 Bus wake-up detection in standby 
+mode
+RxD is set “low” for signalling the bus wake-up event to the 
+microcontroller. Operating mode is not changed.
+Table 2   Operating mode control
+Mode Control Functionality Comments
+ EN TxD V CC NRST RxD
+Sleep Low Low Off Low Floating –
+Standby Low High 1)
+1) The TxD input has a pull-up structure to VCC and is per default set to logic “high” if left open.
+On High 2)
+2) NRST is logic “low” during VCC undervoltage and while issuing a reset pulse to the microcontroller.
+Low
+High
+RxD “low” after a bus wake-up
+RxD “high” after power-up or reset
+Normal
+operation
+High Low
+High
+On High 2) Low
+High
+RxD reflects the signal on the bus
+TxD driven by the microcontroller
+Table 1   Operation mode transitions  (cont’d)
+No. Reason for transition Comment
+Data Sheet 8 Rev. 1.1
+ 2018-10-15
+TLE8457C / TLE8457D
+LIN Transceiver with integrated voltage regulator
+Functional description
+4.1.1 Normal operation mode
+In normal operation mode both th e voltage regulator and the LIN tran sceiver are active. The TLE8457C /
+TLE8457D supports data transmission rates up to 20 kB it/s. Data from the microc ontroller is transmitted to
+the LIN bus via the TxD input, while the receiver detects the data stream on the LIN bus and forwards it to the
+RxD output.
+After entering normal oper ation mode the TLE8457C / TLE8457D requir es a logic “high” signal for the time
+tto,rec on the TxD input before releasing the data communication. The transmitter remains deactivated as long
+as the signal on the TxD input pin remains logic “low ”, preventing possible bus communication disturbance
+(see Figure 4).
+From normal operation mode the TLE8457C / TLE8457D can be set to standby mode or sleep mode.
+Figure 4   Entering normal operatio n mode, transition to sleep mode
+4.1.2 Standby mode
+Standby mode is a low power mode with ultra low quiescent current consumption while the voltage regulator
+remains active, supplying for example a microcontroller in stop mode. No LIN bus communication is possible,
+the transmitter and the receiver are disabled. The low power receiver is still active and the device can wake up
+by a message from the LIN bus.
+For changing the operation mode from standby mode to sleep mode, the device has to be set to normal
+operation mode first, then to sleep mode (see Figure 4).
+TLE8457_NORMAL_MODE
+Standby mode Normal Operation mode Sleep mode
+tMODE,LOWtMODE,HIGH
+NRST
+VCC
+tto,rec t
+Data transmission  RxD
+Data transmission  TxD
+t
+t
+EN
+t
+t
+Data Sheet 9 Rev. 1.1
+ 2018-10-15
+TLE8457C / TLE8457D
+LIN Transceiver with integrated voltage regulator
+Functional description
+Figure 5   Entering standby mode after power-up
+In standby mode the TLE8457C / TLE8457D indicates wa ke-up information on the RxD output. After a power-
+up and reset event, the RxD output will be “high”. If  the TLE8457C / TLE8457D is in standby mode after bus
+wake-up detection, the RxD output will be “low”.
+TLE8457CD_STANDBY_MODE
+Standby modeUn-powered
+The device remains in Standby mode 
+while the signal on the EN pin is „low“
+VS,PON
+EN
+LIN
+VS
+Normal Operation mode
+RxD signals Power-up RxD signals Bus Wake-up
+tWK,bus
+NRST
+VCC
+t
+RxD
+t
+t
+t
+t
+t
+Data Sheet 10 Rev. 1.1
+ 2018-10-15
+TLE8457C / TLE8457D
+LIN Transceiver with integrated voltage regulator
+Functional description
+4.1.3 Sleep mode
+Sleep mode is a low power mode with quiescent current consumption reduced to a minimum while the device
+can still wake up by a message from the LIN bus. Both the transceiver and the voltage regulator are switched
+off.
+4.1.4 Bus wake-up event
+A bus wake-up event, also called remote wake-up, causes a transition from a low power mode to standby
+mode. A falling edge on the LIN bus, follow ed by a dominant BUS signal for the time  tWK,bus results in a bus
+wake-up event. The mode change to standby mode becomes active with the following rising edge on the LIN
+bus, when BUS voltage exceeds VBUS,wk. The TLE8457C / TLE8457D remains in low power mode until it detects
+a state change on the LIN bus from dominant to recessive (see Figure 6). In standby mode a logic “low” signal
+on the RxD output indicates a bus wake-up event.
+In case the TLE8457C / TLE8457D detects a bus wake-up event while already being in standby mode, the wake-
+up event will be signalled with a logic “low” level on RxD and override the previous wake source (see Figure 5).
+Figure 6   Bus wake-up behavior
+TLE8457CD_BUS_WAKE
+VBUS
+VBUS,dom
+VBUS,wk
+Sleep mode Standby mode
+tWK,bus
+TxD is „high“ because of internal 
+pull-up structure
+RxD „low“ indicates a Bus 
+Wake-up event  
+tRST
+VCC,UV,ON
+t
+RxD
+t
+TxD
+t
+EN
+t
+NRST
+VCC
+t
+t
+Data Sheet 11 Rev. 1.1
+ 2018-10-15
+TLE8457C / TLE8457D
+LIN Transceiver with integrated voltage regulator
+Functional description
+4.1.5 Mode transition via EN pin
+The EN input is used for operation mode control of the TLE8457C / TLE 8457D. By setting the EN input logic
+“high” for the time  t MODE,HIGH while being in standby mode, a transition to normal operation mode will be
+triggered.
+If the voltage level at the EN input is set logic “h igh” while the TLE8457C / TLE8457D is in sleep mode, a
+transition to normal mode is initiated.
+From normal operation mode the TLE 8457C / TLE8457D can be set to eith er sleep mode or standby mode. If
+the EN input is set “low” for the time tMODE,LOW while the TxD input is held at logic “high”, the mode will change
+to standby mode. For a transition to sleep mode, th e TxD must be set to logic “low” before the time tMODE,LOW
+elapses after EN goes “low” (see Figure 7). It is recommended to program a short delay time from when EN is
+set “low” until TxD is set “low”, to prevent driving the BUS dominant through mode transition to sleep mode.
+The EN input has an integrated pull-down resistor to ensure the device remains in a low power mode if the EN
+input is left open. The EN input has an integrated hysteresis (see Figure 7).
+The TLE8457C / TLE8457D changes the operation modes regardless of the signal on the BUS pin. In the case of
+a short circuit failure between the LIN bus and GND, resulting in a permanent dominant signal, the TLE8457C
+/ TLE8457D can be set to sleep mode.
+Figure 7   Operation mode control
+ The EN input is blocked while the TLE8457C / TLE8457D is in normal op eration mode or standby mode and
+NRST is “low”, indicating an undervoltage on Vcc. After the NRST output goes “high”, mode control with the EN
+input is released again.
+4.2 Power supplies
+The TLE8457C / TLE8457D is designed for being supplied by the battery line throug h an external reverse
+polarity protection diode at the  VS pin (see Figure 16). An input capacitor is ne eded for damping input line
+transients.
+4.2.1 Power-up and power-down
+During power-up the TLE8457C / TLE8457D will enter standby mode when the VS supply reaches the power-on
+reset level VS,PON. The voltage regulator output VCC will track the VS supply voltage until VCC reaches its nominal
+voltage level. As VCC reaches the undervoltage level  VCC,UV, the NRST output will stay logic “low” for the reset
+TLE8457CD_MODE_CONTROL
+Normal Operation 
+mode
+EN
+Standby mode Normal Operation
+mode Sleep mode
+TxD
+VEN,OFF
+EN hysteresis
+tMODE,HIGHtMODE,LOW tMODE,LOW tMODE,HIGH
+VEN,ON
+NRST
+tRST
+t
+t
+t
+Normal Operation mode
+Data Sheet 12 Rev. 1.1
+ 2018-10-15
+TLE8457C / TLE8457D
+LIN Transceiver with integrated voltage regulator
+Functional description
+time tRST and then be set logic “high”. As NRST goes “high”, the EN input will become active and the TLE8457C
+/ TLE8457D can change operating mode accordingly (see Table 2).
+Figure 8   Power-up an d power-down behavior
+While powering down while in normal operation mode the TLE8457C / TLE8457D will block the LIN transmitter
+as the VS supply voltage falls below  VS,UV,OFF. The voltage regulator wi ll start tracking the  VS supply voltage
+when falling below VCC + VDR. As VCC falls below the undervoltage level VCC,UV, the NRST output will be set logic
+“low”. When the  VS supply voltage falls below the power-on-reset level  VS,PON the voltage regulator will be
+disabled and the TLE8457C / TLE8457D will be considered unpowered.
+TLE8457CD_VS_POWER-UP_DOWN
+un-powered  
+VS
+VS,PON
+VCC
+VS
+VCC
+Standby mode Normal Operation mode
+VCC,UV
+un-powered  
+VS,UV,OFF
+VS,PON
+Transmission blocked
+NRST tRST
+VS,UV,ON
+t
+t
+VCC,UV
+EN
+t
+Data Sheet 13 Rev. 1.1
+ 2018-10-15
+TLE8457C / TLE8457D
+LIN Transceiver with integrated voltage regulator
+Functional description
+4.2.2 VS undervoltage detection
+Figure 9   VS early undervoltage detection
+The TLE8457C / TLE8457D has an undervoltage detection on the supply pin VS with two different thresholds:
+• In normal operation mode the TLE8457C / TLE8457D blocks the communication between the LIN bus and 
+the microcontroller when detecting an early undervoltage event. The RxD output will be set “high”. 
+However, no mode change will occur. After VS rises above the undervoltage release level VS,UV,REL, the bus 
+communication interface will be released as soon as the signal on the TxD input goes “high” (see Figure 9).
+• When the power supply  VS drops below the power-on reset level VS,PON the TLE8457C / TLE8457D not only 
+blocks the transceiver communication, it also changes the operation mode to standby mode after recovery 
+of VS, see Figure 10. In standby mode the TLE8457C / TLE8457D indicates a power-up event on the RxD pin. 
+The power-on reset detection is active in all operation modes.
+Figure 10   VS undervoltage detection
+TLE8457_VS_EARLY_UNDERVOL TAGE_A
+Power-on reset level VS,PON
+Normal Operation mode Normal Operation mode
+Blanking time tblank,UV
+No communication possible
+Undervoltage release level VS,UV,ON
+Undervoltage hysteresis VS,UV,hys
+VS
+Undervoltage blocking level VS,UV,OFF
+t
+TLE8457CD_VS_UNDERVOL TAGE_A
+Power-downNormal Operation mode Standby mode (EN = “low“)
+ Normal Operation mode (EN = “high“)
+Undervoltage hysteresis VS,UV,hys  
+No communication possible
+t
+Undervoltage blocking level VS,UV,OFF
+VS
+Power-on reset level VS,PON
+Blanking time tblank,UV
+Undervoltage release level VS,UV,ON
+Data Sheet 14 Rev. 1.1
+ 2018-10-15
+TLE8457C / TLE8457D
+LIN Transceiver with integrated voltage regulator
+Functional description
+4.3 Voltage regulator
+The TLE8457C / TLE8457D has an integrated voltage regulator dedicated for s upplying microcontrollers
+and/or on-board sensors under harsh automotive environment conditions. It can supply a load current up to
+70 mA with an output voltage tolerance within ± 2%.  Because of the ultra low current consumption, the
+TLE8457C / TLE8457D is perfectly suited for applicat ions permanently connecte d to the battery supply.
+Additionally, in sleep mode, the voltage regulator is switched off and an even lower quiescent current can be
+achieved.
+The voltage regulator output is protected against undervoltage, overcurrent, overtemperature and power-up
+failures. In case the load current rises ab ove the functional rang e, for example during  VCC short circuits, the
+output current is limited to ICC,lim. Therefore the VCC output voltage will drop. A reset pulse will be issued if VCC
+falls below the undervoltage reset threshold.
+The VCC supply output provides a stable supply voltage with output capacitors down to 1 µF, including low ESR
+multi-layer ceramic capacitors.
+4.3.1 VCC undervoltage detection
+The TLE8457C / TLE8457D has an undervoltage detection feature on the voltage regulator VCC output. If the VCC
+voltage falls below the undervoltage threshold  VCC,UV for longer than detection time  tdet,RST, the NRST output
+will be set logic “low” and the transceiver will be deactivated.
+Figure 11   VCC undervoltage detection
+4.3.2 Reset output
+The NRST output is used for issuing reset pulses, for example to an external microcontroller. In case of voltage
+regulator undervoltage or overtemp erature events, the NRST output wi ll go “low” and the transceiver is
+deactivated. The NRST output will stay “low” until a complete recovery from the failure is achieved. After the
+additional time tRST has elapsed NRST will go “high” (see Figure 11).
+While NRST is “low” mode transition is blocked.
+The NRST pin has an internal pull up to VCC. If needed in the application, an additional external pull-up resistor
+can be implemented.
+TLE8457CD_VCC_UNDERVOL TAGE
+VCC,UV
+tRST
+tdet,RST
+Normal Operation mode (EN = „high“)
+Standby mode (EN = „low“)
+NRST goes and stays „low“ as 
+long as VCC is in undervoltage
+NRST stays „low“ for 
+additional Reset time tRST                
+NRST
+VCC
+t
+t
+Data Sheet 15 Rev. 1.1
+ 2018-10-15
+TLE8457C / TLE8457D
+LIN Transceiver with integrated voltage regulator
+Functional description
+4.4 LIN transceiver
+The LIN interface is a single wire, bi-directional bus, used for in-veh icle networks. The integrated LIN
+transceiver of the TLE8457C / TLE8457D is the interface between the microcontroller and the physical LIN bus
+(see Figure 16). Data from the microcontroller is driven to the LIN bus via the TxD in put. The transmit data
+stream on the TxD input is converted to a LIN bus signal  with optimized slew rates in order to minimize the
+electromagnetic emission of the LIN network. The RxD output reads back the information from the LIN bus to
+the microcontroller. The receiver has an integrated filter network for noise suppression from the LIN bus and
+to increase the electromagnetic immunity level of the transceiver.
+The LIN specification defines two valid bus levels (see Figure 12):
+• Dominant state with the LIN bus voltage level near GND, actively driven by a transceiver.
+• Recessive state with the LIN bus volt age pulled up to the supply voltage VS through the bus termination.
+By setting the TxD input of the TLE8457C / TLE8457D to  a logic “low” signal, the transceiver generates a
+dominant level on the BUS interface pin. The receiver reads back the signal on th e LIN bus and indicates the
+dominant LIN bus signal with a logic “low” on the RxD output to the microcontroller. By setting the TxD input
+“high”, the transceiver sets the LIN interface pin to the recessive level. At the same time the recessive level on
+the LIN bus is indicated by a logic “high” signal on the RxD output.
+Every LIN network consists of a ma ster node and one or more slave nodes. To configure the TLE8457C /
+TLE8457D for master node applicatio ns, a termination resistor of 1 k Ω and a diode must be connected
+between the LIN bus and the power supply VS (see Figure 16).
+Figure 12   LIN bus signals
+TLE8457_LIN_COMMUNICATION_A
+t
+TxD
+VCC
+BUS
+VS Recessive Dominant Recessive
+t
+t
+RxD
+VCC
+Vth_REC
+Vth_DOM
+Data Sheet 16 Rev. 1.1
+ 2018-10-15
+TLE8457C / TLE8457D
+LIN Transceiver with integrated voltage regulator
+Functional description
+4.4.1 TxD time-out
+The TxD time-out feature protects the LIN bus against permanent blocking in the case where the logical signal
+on the TxD input is continuously “low ”, caused by a malfunctioning microc ontroller or a short circuit on the
+printed circuit board for example. In normal operation mode, a logic “low” signal on the TxD input for time t >
+tTxD disables the transmitter’s output driver stage (see Figure 13). The receiver will remain active and the data
+on the BUS is still monitored on the RxD output.
+The TLE8457C / TLE8457D will release the output stage after a TxD time-out event first when detecting a logic
+“high” signal on the respective TxD input for the duration of tto,rec.
+Figure 13   TxD time-out
+4.4.2 Short-circuit
+The BUS pin of TLE8457C / TLE8457D can withstand short-circuits to either GND or to the power supply VS. The
+integrated overtemperature protection may disable the transmitter if a permanent short circuit on the BUS
+pin causes the TLE8457C / TLE8457D to overheat.
+4.5 Overtemperature protection
+The TLE8457C / TLE8457D has two independent overtemperature detectors for protecting the device against
+thermal overstress, namely on the voltage regulator pass element and on the LIN bus transmitter. In the case
+where the junction temperature at the LIN transmitter increases above the thermal shut-down level TJSD, it will
+be disabled until the junction temperature of the transmitter cools down below TJ <  TJSD -  ∆T. No other effect,
+nor mode change, will occur. After the LIN transmitter overtemperature recovery, the TxD input requires a
+logic “high” signal before restarting data transmission.
+If an overtemperature event is detected on the voltage regulator, it will be disabled and the NRST output will
+be set “low”. During the overtemperature condition no functionality of the TLE8457C / TLE8457D is available.
+After the junction temperature cools down below TJ <  TJSD -  ∆T, the voltage regulator is reactivated and NRST
+will be set “high” after delay time tRST.
+Note: The overtemperature detection of the LIN tr ansmitter and the voltage regulator are working 
+independently. Therefore either only the LIN transmitter or only the voltage regulator or both can be 
+switched off, depending on the circumstance. An example of only LIN transmitter overtemperature 
+could be bus short-circuit or severe electromagnetical injection.
+TLE8457_TXD_TIMEOUT_A
+t
+TxD
+tto,rectTxD
+TxD time-out due to e.g. microcontroller error
+Release after TxD time-out
+Recovery of the microcontroller error
+t
+Normal communication Normal communication
+VBUS
+Data Sheet 17 Rev. 1.1
+ 2018-10-15
+TLE8457C / TLE8457D
+LIN Transceiver with integrated voltage regulator
+General product characteristics
+5 General product characteristics
+5.1 Absolute maximum ratings
+Notes
+1. Stresses above the ones listed he re may cause permanent damage to the device. Exposure to absolute 
+maximum rating conditions for extended periods may affect device reliability.
+2. Integrated protection functions are designed to preven t IC destruction under fault conditions described in the 
+data sheet. Fault conditions are considered as ‘outside’ normal operating range. Protection functions are not 
+designed for continuous repetitive operation.
+Table 3   Absolute maximum ratings voltages, currents and temperatures1)
+All voltages with respect to ground; positive current flowing into pin; unless otherwise specified
+1) Not subject to production test, specified by design.
+Parameter Symbol Values Unit Note or 
+Test Condition
+Number
+Min. Typ. Max.
+Voltage
+Supply input voltage VS -0.3 – 45 V LIN Spec 2.2A (Par. 11) P_5.1.1
+Bus input voltage VBUS -27 – 40 V – P_5.1.2
+Logic voltages at EN and TxD Vlogic,in -0.3 – 7.0 V – P_5.1.3
+Logic voltages at RxD and NRST Vlogic,out -0.3 – VCC +
+0.3
+V– P_5.1.4
+Voltage regulator output VCC -0.3 – 7.0 V – P_5.1.5
+Currents
+Output current at RxD IRxD -15 – 15 mA – P_5.1.6
+Output current at NRST INRST ––1 0 m A – P_5.1.7
+Temperature
+Junction temperature Tj -40 – 150 °C – P_5.1.8
+Storage temperature Ts -55 – 150 °C – P_5.1.9
+ESD susceptibility
+Electrostatic discharge voltage 
+at VS and BUS vs. GND
+VESD -8 – 8 kV Human body model
+(100 pF via 1.5 kΩ)2)
+2) ESD susceptibility, HBM according to ANSI/ESDA/JEDEC JS-001 (1.5 kΩ, 100 pF).
+P_5.1.10
+Electrostatic discharge voltage 
+all other pins
+VESD -2 – 2 kV Human body model
+(100 pF via 1.5 kΩ)2)
+P_5.1.11
+Electrostatic discharge voltage 
+corner pins
+VESD -750 – 750 V Charged device 
+model3)
+3) ESD susceptibility, charged device model “CDM” EIA / JESD 22-C101 or ESDA STM5.3.1.
+P_5.1.12
+Electrostatic discharge voltage 
+at all other pins
+VESD -500 – 500 V Charged device 
+model3)
+P_5.1.13
+Data Sheet 18 Rev. 1.1
+ 2018-10-15
+TLE8457C / TLE8457D
+LIN Transceiver with integrated voltage regulator
+General product characteristics
+5.2 Functional range
+Note: Within the functional range the IC operates as described in the circuit description. The electrical 
+characteristics are specified within the conditions given in the related electrical characteristics 
+table.
+Table 4   Operating range
+Parameter Symbol Values Unit Note or 
+Test Condition
+Number
+Min. Typ. Max.
+Supply voltage
+Supply voltage range for normal 
+operation
+VS(nor) 5.5 – 28 V LIN Spec 2.2A 
+Param. 10
+P_5.2.12
+Extended Supply Voltage Range 
+for Operation
+VS(ext) 3.0 – 40 V Parameter deviations 
+possible
+P_5.2.22
+Stability requirement on VCC
+Output capacitor range C VCC 1 . 0 ––µ F 1)3)
+1) The minimum output capacitance requirement is applicable for a worst case capacitance tolerance of 30%.
+P_5.2.3
+Output capacitor ESR ESR(C VCC)– – 5 . 0 Ω 2)3)
+2) Relevant ESR value at f =1 0k H z .
+P_5.2.4
+Thermal parameter
+Junction temperature Tj -40 – 150 °C 3)
+3) Not subject to production test, specified by design.
+P_5.2.5
+Data Sheet 19 Rev. 1.1
+ 2018-10-15
+TLE8457C / TLE8457D
+LIN Transceiver with integrated voltage regulator
+General product characteristics
+5.3 Thermal characteristics
+Note: This thermal data was generated in accord ance with JEDEC JESD51 standards. For more 
+information, please visit www.jedec.org.
+Table 5   Thermal resistance 1)
+1) Not subject to production test, specified by design.
+Parameter Symbol Values Unit Note or 
+Test Condition
+Number
+Min. Typ. Max.
+Thermal resistance, PG-DSO-8 package version
+Junction to ambient RthJA – 130 – K/W 2)
+2) Specified RthJA value is according to Jedec JESD51-2,-5,-7 at natural convection on FR4 2s2p board; The product 
+(IC+package) was simulated on a 76.2 × 114.3 × 1.5 mm3 board with 2 inner copper layers (2 × 70 μmC u ,  
+2×3 5 μm Cu). Where applicable a thermal via array under the exposed pad contacted to the first inner copper layer.
+P_5.3.1
+Thermal resistance, PG-TSON-8 package version
+Junction to ambient RthJA –6 0 –K / W 2) P_5.3.2
+Junction to ambient – 190 – K/W Footprint only 3)
+3) Specified RthJA value is according to Jedec JESD51-3 at natural convection on FR4 1s0p board; The product 
+(IC+package) was simulated on a 76.2 × 114.3 × 1.5 mm3 board with 1 inner copper layer (1 × 70 μmC u ) .
+P_5.3.5
+Junction to ambient – 70 – K/W 300 mm 2 heatsink on 
+PCB3)
+P_5.3.6
+Thermal shutdown junction temperature
+Thermal shutdown temperature TJSD 160 180 200 °C TJSD increasing P_5.3.3
+Thermal shutdown hysteresis ΔT –1 0 –K TJSD decreasing P_5.3.4
+Data Sheet 20 Rev. 1.1
+ 2018-10-15
+TLE8457C / TLE8457D
+LIN Transceiver with integrated voltage regulator
+Electrical characteristics
+6 Electrical characteristics
+6.1 Functional device characteristics
+Table 6   Electrical characteristics
+5.5 V < VS <2 8V ;  RLIN = 500 Ω; -40°C < Tj < 150°C;
+all voltages with respect to ground; positive current flowing into pin1); unless otherwise specified.
+Parameter Symbol Values Unit Note or Test Condition Number
+Min. Typ. Max.
+Current Consumption
+Current consumption at VS, 
+transmitter in recessive state
+IS,rec 0.1 0.3 0.7 mA ICC =5 0µ A ;  w i t h o u t  RLIN;
+TxD = “high”; VBUS = VS; 
+NRST=”high”
+P_6.1.1
+Current consumption at VS, 
+transmitter in dominate state
+IS,dom 0.1 1.0 3.0 mA ICC =5 0µ A ;  w i t h o u t  RLIN;
+TxD = “low”; VBUS =0V ;  
+NRST=”high”
+P_6.1.2
+Current consumption at VS, 
+dominate state
+IS,dom_max 70 71 73 mA ICC = 70 mA; without RLIN;
+TxD = “low”; VBUS =0V ;  
+NRST=”high”
+P_6.1.3
+Current consumption at VS in 
+standby mode
+IS,standby = IS - ICC
+IS,standby –2 0 4 0 µ A S t a n d b y  m o d e ;  
+ICC =5 0µ A ;  
+VS = VBUS = 13.5 V; 
+N R S T=T x D=“ h i g h ”
+P_6.1.4
+Current consumption at VS in 
+sleep mode
+IS,Sleep – 7 16 µA Sleep mode; VS = 13.5 V; 
+VBUS =V S; VCC =0V
+P_6.1.5
+Current consumption at VS in 
+sleep mode. BUS shorted to 
+GND
+IS,SC_GND 250 – 800 µA Sleep Mode;
+VS = 13.5 V; VBUS =0V ;  
+VCC =0V
+P_6.1.6
+Power-up and power-down
+Power-on reset level, VS on VS,PON ––3 . 0 V – P_6.1.7
+Undervoltage threshold, VS on VS,UV,ON 4.7 5.15 5.5 V Rising edge P_6.1.8
+Undervoltage threshold, VS off VS,UV,OFF 4.4 4.85 5.2 V Falling edge P_6.1.9
+Undervoltage hysteresis on VS
+VS,UV,hys = VS,UV,ON - VS,UV,OFF
+VS,UV,hys 200 300 – mV 2) P_6.1.10
+Undervoltage blanking time tBLANK,UV –1 0 –µ s 2) P_6.1.11
+Enable input: EN
+“High” level input voltage V
+EN,ON 2––V – P_6.1.12
+“Low” level input voltage VEN,OFF ––0 . 8 V – P_6.1.13
+Input hysteresis VEN,hys 50 200 – mV – P_6.1.14
+Pull-down resistance REN 15 30 60 k Ω – P_6.1.15
+Delay time for mode change,
+EN → “low”
+tMODE,LOW 10 – 50 µs – P_6.1.16
+Data Sheet 21 Rev. 1.1
+ 2018-10-15
+TLE8457C / TLE8457D
+LIN Transceiver with integrated voltage regulator
+Electrical characteristics
+Delay time for mode change,
+EN → “high”
+tMODE,HIGH ––5µ s 2) P_6.1.17
+Input capacitance C i_EN –5–p F 2) P_6.1.83
+Reset Output: NRST
+“High” level leakage current INRST,H ––5µ A 2) P_6.1.19
+“Low” level output voltage VNRST ––0 . 4 V INRST =1 . 5m A ;  VCC >1V ; P_6.1.20
+Reset time tRST 41 0 1 6 m s – P_6.1.21
+Internal pull-up resistance RNRST 51 0 2 0 k Ω – P_6.1.22
+Voltage regulator output, 5 V versions (TLE8457Cxx): VCC
+Output voltage VCC 4.9 5.0 5.1 V 0.05 mA < ICC <7 0m A ;
+5.8 V < VS <2 8V
+P_6.1.23
+Output voltage drop
+VDR =V S -V CC 3)
+VDR – 250 650 mV ICC <7 0m A P_6.1.24
+Output voltage drop, 50 mA
+VDR =V S -V CC 
+VDR,50 – 180 480 mV ICC <5 0m A P_6.1.25
+Output voltage drop, 20 mA
+VDR =V S -V CC 
+VDR,20 – 80 200 mV ICC <2 0m A P_6.1.26
+Output current limitation ICC,lim -150 – -70 mA 0 V < VCC <4 . 8V P_6.1.27
+Load regulation ∆VCC,lo –2 5 5 0 m V 0 . 0 5 m A < ICC <7 0m A ;
+VS = 13.5 V
+P_6.1.28
+Line regulation ∆VCC,li –2 5 5 0 m V ICC =1m A ;
+5.8 V < VS <2 8V
+P_6.1.29
+Power supply ripple rejection PSRR 50 60 – dB 2) ICC =5 0m A ;  f = 100 Hz; 
+Vr =0 . 5Vpp; VS = 13.5 V
+P_6.1.30
+Undervoltage reset threshold VCC,UV 4.27 4.4 4.5 V VCC decreasing P_6.1.31
+Undervoltage reset hysteresis VCC,UV,hy 50 100 – mV – P_6.1.32
+Undervoltage detection time tdet,RST 1–2 0 µ s 2) VCC =3 . 5V
+CNRST =2 0p F
+P_6.1.33
+Voltage regulator output, 3.3 V versions (TLE8457Dxx): VCC
+Output voltage VCC 3.234 3.300 3.366 V 0.05 mA < ICC <7 0m A ;
+4.066 V < VS <2 8V
+P_6.1.34
+Output voltage drop
+VDR =V S -V CC 
+VDR – 380 770 mV ICC <7 0m A P_6.1.35
+Output voltage drop, 50 mA
+VDR =V S -V CC 
+VDR,50 – 280 550 mV ICC <5 0m A P_6.1.36
+Output voltage drop, 20 mA
+VDR =V S -V CC 
+VDR,20 – 110 220 mV ICC <2 0m A P_6.1.37
+Table 6   Electrical characteristics  (cont’d)
+5.5 V < VS <2 8V ;  RLIN = 500 Ω; -40°C < Tj < 150°C;
+all voltages with respect to ground; positive current flowing into pin1); unless otherwise specified.
+Parameter Symbol Values Unit Note or Test Condition Number
+Min. Typ. Max.
+Data Sheet 22 Rev. 1.1
+ 2018-10-15
+TLE8457C / TLE8457D
+LIN Transceiver with integrated voltage regulator
+Electrical characteristics
+Output current limitation ICC,lim -150 – -70 mA 0 V < VCC <3 . 1V P_6.1.38
+Load regulation ∆VCC,lo –2 5 5 0 m V 0 . 0 5 m A < ICC <7 0m A ;
+VS = 13.5 V
+P_6.1.39
+Line regulation ∆VCC,li –2 5 5 0 m V ICC =1m A ;
+4.066 V < VS <2 8V
+P_6.1.40
+Power supply ripple rejection PSRR 50 60 – dB 2) ICC = 50 mA; f = 100 Hz; 
+Vr =0 . 5Vpp; VS = 13.5 V
+P_6.1.41
+Undervoltage reset threshold VCC,UV 2.82 2.90 2.96 V VCC decreasing P_6.1.42
+Undervoltage reset hysteresis VCC,UV,hy 33 66 – mV – P_6.1.43
+Undervoltage detection time tdet,RST 1–2 0 µ s 2) VCC =2 . 3 1V
+CNRST =2 0p F
+P_6.1.44
+Receiver output: RxD
+“High” level output voltage VRxD,H 0.8 
+×V CC
+––V IRxD =- 2m A ;  VBUS = VS P_6.1.45
+“Low” level output voltage VRxD,L – – 0.2 
+×V CC
+V IRxD =2m A ;  VBUS =0V P_6.1.46
+Transmission input: TxD
+“High” level input voltage 
+range
+VTxD,H 0.7 
+×V CC
+– – V Recessive state P_6.1.47
+“Low” level input voltage 
+range
+VTxD,L – – 0.3 
+×V CC
+VD o m i n a n t  s t a t e P_6.1.48
+Input hysteresis VTxD,hys 200 – – mV – P_6.1.49
+Pull-up resistance RTxD 15 30 60 k Ω – P_6.1.50
+TxD time-out tTxD 81 8 2 8 m s – P_6.1.51
+TxD recessive release time tto,rec ––1 0 µ s 2) P_6.1.52
+Input capacitance C i_TxD –5–p F 2) P_6.1.93
+BUS receiver: BUS
+Receiver threshold voltage, 
+recessive to dominant edge
+V
+th_dom 0.4 
+×V S
+0.44 
+×V S
+–V VS <1 8V ; P_6.1.53
+Receiver dominant state VBUSdom -27 – 0.4 
+×V S
+V LIN Spec 2.2A (Par. 17) 4) P_6.1.54
+Receiver threshold voltage, 
+dominant to recessive edge
+Vth_rec – 0.56 
+×V S
+0.6 
+×V S
+V VS <1 8V ; P_6.1.55
+Receiver recessive state VBUSrec 0.6 
+×V S
+– 40 V LIN Spec 2.2A (Par. 18) 5) P_6.1.56
+Receiver center voltage VBUS_CNT 0.475 
+×V S
+0.5 
+×V S
+0.525 
+×V S
+V LIN Spec 2.2A (Par. 19) 6)
+VS < 18V;
+P_6.1.57
+Table 6   Electrical characteristics  (cont’d)
+5.5 V < VS <2 8V ;  RLIN = 500 Ω; -40°C < Tj < 150°C;
+all voltages with respect to ground; positive current flowing into pin1); unless otherwise specified.
+Parameter Symbol Values Unit Note or Test Condition Number
+Min. Typ. Max.
+Data Sheet 23 Rev. 1.1
+ 2018-10-15
+TLE8457C / TLE8457D
+LIN Transceiver with integrated voltage regulator
+Electrical characteristics
+Receiver hysteresis VHYS 0.07 
+×V S
+0.12 
+×V S
+0.175 
+×V S
+V LIN Spec 2.2A (Par. 20) 7)
+VS <1 8V ;
+P_6.1.58
+Wake-up threshold voltage VBUS,wk 0.4 
+×V S
+0.5 
+×V S
+0.6 
+×V S
+V– P_6.1.59
+BUS transmitter: BUS
+BUS recessive output voltage VBUS,ro 0.8 
+×V S
+–V S V TxD = “high”; Open load P_6.1.60
+BUS short-circuit current IBUS_LIM 40 85 125 mA VBUS =1 8V ;
+LIN Spec 2.2A (Par. 12);
+P_6.1.61
+Leakage current IBUS_NO_GND -1 -0.5 – mA VS =0V ;  VBUS =- 1 2V ;
+LIN Spec 2.2A (Par. 15)
+P_6.1.62
+Leakage current IBUS_NO_BAT –15µ A VS =0V ;  VBUS =1 8V ;
+LIN Spec 2.2A (Par. 16)
+P_6.1.63
+Leakage current IBUS_PAS_dom -1 -0.5 – mA VS =1 8V ;  VBUS =0V ;
+LIN Spec 2.2A (Par. 13)
+P_6.1.64
+Leakage current IBUS_PAS_rec –15µ A VS =8V ;  VBUS =1 8V ;
+Driver stage “off”;
+TxD = “high”;
+LIN Spec 2.2A (Par. 14)
+P_6.1.65
+Forward voltage serial diode V
+SerDiode 0.4 – 1.0 V ISerDiode =-7 5µ A
+LIN Spec 2.2A (Par.21)
+P_6.1.66
+BUS pull-up resistance Rslave 20 40 60 k Ω LIN Spec 2.2A (Par. 26) P_6.1.67
+BUS dominant output voltage 
+maximum load
+VBUS,do
+––1 . 4 V
+VTxD =0V ;  RLIN = 500 Ω;
+VS =5 . 5  V ;
+P_6.1.68
+BUS dominant output voltage 
+maximum load
+VBUS,do
+––2 . 0 V
+VTxD =0V ;  RLIN = 500 Ω;
+VS = 18 V;
+P_6.1.98
+Input capacitance C i_BUS –3 0 p F 2) P_6.1.95
+Dynamic transceiver characteristics: BUS
+Dominant time for bus wake-
+up
+tWK,bus 30 – 150 µs – P_6.1.69
+Propagation delay:
+LIN bus dominant to 
+RxD “low”
+LIN bus recessive to 
+RxD “high”
+t
+rx_pdft
+trx_pdr
+1
+1
+3.5
+3.5
+6
+6
+µs
+µs
+LIN Spec 2.2A (Par. 31)
+CRxD =2 0p F
+P_6.1.70
+Receiver delay symmetry trx_sym -2 – 2 µs LIN Spec 2.2A (Par. 32)
+trx_sym = trx_pdf - trx_pdr;
+CRxD =2 0p F
+P_6.1.71
+Table 6   Electrical characteristics  (cont’d)
+5.5 V < VS <2 8V ;  RLIN = 500 Ω; -40°C < Tj < 150°C;
+all voltages with respect to ground; positive current flowing into pin1); unless otherwise specified.
+Parameter Symbol Values Unit Note or Test Condition Number
+Min. Typ. Max.
+Data Sheet 24 Rev. 1.1
+ 2018-10-15
+TLE8457C / TLE8457D
+LIN Transceiver with integrated voltage regulator
+Electrical characteristics
+Duty cycle D1
+(for worst case at 20 kBit/s)
+D1 = tbus_rec(min) /2× tbit
+D1 0.396 – – Duty cycle 1 8)
+THRec(max) = 0.744 × VS; 
+THDom(max) = 0.581 ×  VS;
+VS =7 . 0…1 8V ;  
+tbit =5 0µ s ;
+LIN Spec 2.2A (Par. 27)
+P_6.1.72
+Duty cycle D1
+VS supply 5.5 V to 7.0 V
+(for worst case at 20 kBit/s)
+D1 = tbus_rec(min) /2×t bit
+D1 0.396 – – Duty cycle 1 8)
+THRec(max) = 0.760 × VS; 
+THDom(max) = 0.593 ×  VS;
+5.5 V < VS <7 . 0V ;
+tbit =5 0µ s
+P_6.1.73
+Duty cycle D2
+(for worst case at 20 kBit/s)
+D2 = tbus_rec(max) /2×t bit
+D2 – – 0.581 Duty cycle 2 8)
+THRec(min) = 0.422 × VS;
+THDom(min) = 0.284 × VS;
+VS = 7.6 … 18 V; 
+tbit =5 0µ s ;
+LIN Spec 2.2A (Par. 28)
+P_6.1.74
+Duty cycle D2
+VS supply 6.1 V to 7.6 V
+(for worst case at 20 kBit/s)
+D2 = tbus_rec(max) /2×t bit
+D2 – – 0.581 Duty cycle 2 8)
+THRec(min) =0 . 4 1×VS;
+THDom(min) = 0.275 × VS;
+6.1 V < VS <7 . 6V ;
+tbit =5 0µ s ;
+P_6.1.75
+Duty cycle D3
+VS supply 7.0 V to 18.0 V
+(for worst case at 10.4 kBit/s)
+D3 = tbus_rec(min) /2×t bit
+D3 0.417 – – Duty cycle 3 8)
+THRec(max) = 0.778 × VS;
+THDom(max) = 0.616 × VS;
+VS = 7.0 … 18 V;
+tbit =9 6µ s ;
+LIN Spec 2.2A (Par. 29)
+P_6.1.76
+Duty cycle D3
+VS supply 5.5 V to 7.0 V
+(for worst case at 10.4 kBit/s)
+D3 = tbus_rec(min) /2×t bit
+D3 0.417 – – Duty cycle 3 8)
+THRec(max) = 0.797 × VS;
+THDom(max) = 0.630 ×V S;
+5.5 V < VS <7 . 0V ;
+tbit =9 6µ s ;
+P_6.1.77
+Table 6   Electrical characteristics  (cont’d)
+5.5 V < VS <2 8V ;  RLIN = 500 Ω; -40°C < Tj < 150°C;
+all voltages with respect to ground; positive current flowing into pin1); unless otherwise specified.
+Parameter Symbol Values Unit Note or Test Condition Number
+Min. Typ. Max.
+Data Sheet 25 Rev. 1.1
+ 2018-10-15
+TLE8457C / TLE8457D
+LIN Transceiver with integrated voltage regulator
+Electrical characteristics
+Duty cycle D4
+VS supply 7.6 V to 18.0 V
+(for worst case at 10.4 kBit/s)
+D4 = tbus_rec(max) /2×t bit
+D4 – – 0.590 Duty cycle 4 8)
+THRec(min) = 0.389 × VS;
+THDom(min) = 0.251 × VS;
+VS = 7.6 … 18 V;
+tbit =9 6µ s ;
+LIN Spec 2.2A (Par. 30)
+P_6.1.78
+Duty cycle D4
+VS supply 6.1 V to 7.6 V
+(for worst case at 10.4 kBit/s)
+D4 = tbus_rec(max) / 2 × tbit
+D4 – – 0.590 Duty cycle 4 8)
+THRec(min) = 0.378 × VS;
+THDom(min) = 0.242 × VS;
+6.1 V < VS <7 . 6V ;
+tbit =9 6µ s ;
+P_6.1.79
+1) Load current on VCC specified positive direction out of pin.
+2) Not subject to production test, specified by design.
+3) Measured when the output voltage VCC has dropped 100 mV from the nominal value obtained at VS = 13.5 V.
+4) Minimum limit specified by design.
+5) Maximum limit specified by design.
+6) V
+BUS_CNT =( Vth_dom +V th rec)/2 .
+7) VHYS =V th_rec -V th_dom.
+8) BUS load according to LIN Spec 2.2A:
+Load 1 = 1 nF / 1 kΩ = CBUS / RLIN
+Load 2 = 6.8 nF / 660 Ω = CBUS / RLIN
+Load 3 = 10 nF / 500 Ω = CBUS / RLIN
+Table 6   Electrical characteristics  (cont’d)
+5.5 V < VS <2 8V ;  RLIN = 500 Ω; -40°C < Tj < 150°C;
+all voltages with respect to ground; positive current flowing into pin1); unless otherwise specified.
+Parameter Symbol Values Unit Note or Test Condition Number
+Min. Typ. Max.
+Data Sheet 26 Rev. 1.1
+ 2018-10-15
+TLE8457C / TLE8457D
+LIN Transceiver with integrated voltage regulator
+Electrical characteristics
+6.2 Diagrams
+Figure 14   Simplified test circuit for dynamic transceiver characteristics
+Figure 15   Timing diagram for dy namic transceiver characteristics
+TLE8457_TEST_CIRCUIT_A
+GND
+BUS
+RLIN
+VCC
+RxD
+100 nF
+VS
+CBus
+TxD
+CRxD
+NRST
+EN
+CVCC
+CNRST
+TLE8457_LIN_TIMING_DIAGRAM_A
+Duty Cycle D1, D3 = tBUS_rec(min) / (2 x tBIT)
+Duty Cycle D2, D4 = tBUS_rec(max) / (2 x tBIT)
+tBit tBit tBit
+tBus_dom(max) tBus_rec(min)
+Thresholds of receiving node 1
+THRec(max)
+THDom(max)
+THRec(min)
+THDom(min)
+tBus_dom(min) tBus_rec(max)
+trx_pdf(1) trx_pdr(1)
+trx_pdf(2)trx_pdr(2)
+VSUP
+(Transceiver supply of 
+transmitting node)
+TxD
+(input to transmitting node)
+RxD
+(output of receiving node 2)
+RxD
+(output of receiving node 1)
+Thresholds of receiving node 2
+Data Sheet 27 Rev. 1.1
+ 2018-10-15
+TLE8457C / TLE8457D
+LIN Transceiver with integrated voltage regulator
+Application information
+7 Application information
+Note: The following information is given as a hint for the implementation of the device only and shall not 
+be regarded as a description or warranty of a certain functionality, condition or quality of the device.
+7.1 Application example
+Figure 16   Simplified application circuit
+TLE7258
+GND
+Micro Controller 
+e.g XC22xx
+VS
+VBat
+LIN  
+BUS
+Master Node 
+BUS
+TLE42xx
+22μF 100nF
+1nF
+5 V or 3.3V
+ECU_1
+Pull-Up 
+to MCU 
+Supply
+2.4kΩ 
+1
+2
+4
+5
+78
+6
+1μF 100nF
+VQ
+GND INH
+VI
+1kΩ 
+INH
+RxD
+TxD
+EN
+GND
+VCC
+100nF
+TLE8457
+GND
+Micro Controller 
+e.g XC22xx
+VS
+Slave Node 
+BUS
+22μF 100nF
+220pF
+ECU_X
+5
+2
+6
+3
+8
+4
+1μF 100nF
+VCC
+RxD
+TxD
+EN GND
+VCC
+1
+7
+NRST
+Data Sheet 28 Rev. 1.1
+ 2018-10-15
+TLE8457C / TLE8457D
+LIN Transceiver with integrated voltage regulator
+Application information
+7.2 ESD robustness according to IEC61000-4-2
+Test for ESD robustness according to IEC61000-4-2 (150 pF, 330 Ω) have been performed. The results and test
+conditions are available in a separate test report.
+7.3 Transient robustness according to ISO 7637-2
+Test for transient robustness accord ing to ISO 7637-2 have been performe d. The results and test conditions
+are available in a separate test report.
+7.4 LIN physical layer compatibility
+As the LIN physical layer is independent from higher LIN layers (for example LIN protocol layer), all nodes with
+a LIN physical layer corresponding to this revision ca n be mixed with LIN physical layer nodes, which are
+according to older revisions (LIN 1.0,  LIN 1.1, LIN 1.2, LIN 1.3, LIN 2. 0, LIN 2.1 and LIN 2.2), without any
+restrictions.
+Table 7   ESD robustness according to IEC61000-4-2
+Performed Test Results Unit Remarks
+Electrostatic discharge voltage at pin VS, BUS versus GND +8 kV 1)Positive pulse
+1) ESD susceptibility according LIN EMC 1.3 Test Specification,  Section 4.3. (IEC 61000-4-2) - Tested by external test 
+house.
+Electrostatic discharge voltage at pin VS, BUS versus GND -8 kV 1)Negative pulse
+Table 8   Automotive transient robustness according to ISO 7637-2
+Performed Test Results Unit
+Pulse 1 -100 V
+Pulse 2 +75 V
+Pulse 3a -150 V
+Pulse 3b +100 V
+Data Sheet 29 Rev. 1.1
+ 2018-10-15
+TLE8457C / TLE8457D
+LIN Transceiver with integrated voltage regulator
+Package information
+8 Package information
+Figure 17 PG-DSO-8 (Plastic dual small outline PG-DSO-8)1)
+Figure 18 PG-TSON-8 (Plastic thin small outline nonleaded PG-TSON-8)1)
+Green Product (RoHS compliant)
+To meet the world-wide customer requirements for en vironmentally friendly products and to be compliant
+with government regulations the device is available as a green product. Green products are RoHS-Compliant
+(i.e Pb-free finish on leads and suitable for Pb-free soldering according to IPC/JEDEC J-STD-020).
+Further information on packages
+https://www.infineon.com/packages
+1) Dimensions in mm
++0.06
+0.19
+0.35 x 45˚
+1)
+-0.24
+C
+8 MAX.
+0.64
+±0.26
+±0.25
+0.2 8xM C
+1.27
++0.10.41
+0.2 M A
+-0.06
+1.75 MAX.
+(1.45)
+±0.070.175
+B
+8xB
+2)
+Index Marking
+5-0.2
+1)
+41
+85
+A
+1) Does not include plastic or metal protrusion of 0.15 max. per side
+2) Lead width can be 0.61 max. in dambar area
+GPS01181
+0.1
+±0.10.4
+Pin 1 Marking Pin 1 Marking
+PG-TSON-8-1-PO   V01
+±0.10.2
+±0.10.25
+0.81
+±0.1
+2.4±0.1
+0.1 ±0.10.3 ±0.10.38
+±0.10.3
+±0.10.65
+±0.13
+±0.13
+±0.1
+0 +0.05
+1±0.1
+0.56±0.1
+1.63±0.1
+1.58±0.1
+0.05
+0.07 MIN.
+Z (4:1)
+Z
+Data Sheet 30 Rev. 1.1
+ 2018-10-15
+TLE8457C / TLE8457D
+LIN Transceiver with integrated voltage regulator
+Revision history
+9 Revision history
+Revision Date Changes
+1.1 2018-10-15 Data Sheet updated:
+• Updated to new layout style 
+• Editorial changes
+1.0 2018-01-22 Data Sheet created
+Trademarks
+All referenced product or service names and trademarks are the property of their respective owners.
+Edition 2018-10-15
+Published by 
+Infineon Technologies AG
+81726 Munich, Germany
+© 2018 Infineon Technologies AG.
+All Rights Reserved.
+Do you have a question about any 
+aspect of this document?
+Email: erratum@infineon.com
+Document reference
+Z8F60768586
+IMPORTANT NOTICE
+The information given in this document shall in no
+event be regarded as a guarantee of conditions or
+characteristics ("Beschaffenheitsgarantie"). 
+With respect to any examples, hints or any typical
+values stated herein and/or any information regarding
+the application of the product, Infineon Technologies
+hereby disclaims any and all warranties and liabilities
+of any kind, including without limitation warranties of
+non-infringement of intellectual property rights of any
+third party. 
+In addition, any information given in this document is
+subject to customer's comp liance with its obligations
+stated in this document and any applicable legal
+requirements, norms and standards concerning
+customer's products and any use of the product of
+Infineon Technologies in customer's applications. 
+The data contained in this document is exclusively
+intended for technically trained staff. It is the
+responsibility of customer's technical departments to
+evaluate the suitability of the product for the intended
+application and the completeness of the product
+information given in this document with respect to
+such application.  
+For further information on technology, delivery terms
+and conditions and prices, please contact the nearest
+Infineon Technologies Office (www.infineon.com).
+WARNINGS
+Due to technical requirements products may contain
+dangerous substances. For information on the types
+in question please contact your nearest Infineon
+Technologies office.
+Except as otherwise explicitly approved by Infineon
+Technologies in a written document signed by
+authorized representatives of Infineon Technologies,
+Infineon Technologies’ products may not be used in
+any applications where a failure of the product or any
+consequences of the use thereof can reasonably be
+expected to result in personal injury.

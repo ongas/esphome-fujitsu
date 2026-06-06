@@ -12,12 +12,15 @@ void serialTask(void *pvParameters) {
     uint32_t frameCount = 0;
     uint32_t loopCount = 0;
     uint32_t lastDiag = millis();
+    uint32_t bytesReceived = 0;
+    uint32_t lastByteCount = 0;
 
     for (;;) {
         loopCount++;
+        
         if (climate->heatPump.waitForFrame()) {
             frameCount++;
-            delay(60);
+            delay(60);  // upstream: 60ms delay before sending response
             climate->heatPump.sendPendingFrame();
             climate->pendingUpdate = false;
         }
@@ -39,47 +42,46 @@ void serialTask(void *pvParameters) {
                          i > 0 ? " " : "", p.src, p.dst, p.type, p.cP, p.count);
                 strncat(patterns, tmp, sizeof(patterns) - strlen(patterns) - 1);
             }
-            ESP_LOGW("fuji", "DIAG: frames=%u dst:P=%lu/S=%lu/O=%lu bound=%d probe=%lu@%lums resp=%lu@%lums echo=%d/match=%d patterns=[%s]",
+            ESP_LOGW("fuji", "DIAG: frames=%u bytes_rx=%u delta=%u dst:P=%lu/S=%lu/O=%lu bound=%d probe=%lu@%lums resp=%lu@%lums echo=%d/match=%d patterns=[%s]",
                      frameCount,
+                     bytesReceived, bytesReceived - lastByteCount,
                      climate->heatPump.frameDestPrimary, climate->heatPump.frameDestSecondary, climate->heatPump.frameDestOther,
                      climate->heatPump.isBound() ? 1 : 0,
                      climate->heatPump.probeReceivedCount, climate->heatPump.probeReceivedMs,
                      climate->heatPump.responseSentCount, climate->heatPump.responseSentMs,
                      climate->heatPump.lastEchoCount, climate->heatPump.lastEchoMatch ? 1 : 0,
                      patterns);
+            lastByteCount = bytesReceived;
             lastDiag = millis();
         }
+        
+        // Yield to allow other tasks (including watchdog) to run
+        vTaskDelay(1);
     }
 }
 
 void FujitsuClimate::setup() {
-    ESP_LOGW("fuji", "setup() at %lums - RX:%d TX:%d EN:%d NRST:%d (priority=BUS, before WiFi)", 
-             millis(), this->rx_pin_, this->tx_pin_, this->en_pin_, this->nrst_pin_);
+    ESP_LOGW("fuji", "setup() at %lums - RX:%d TX:%d (priority=BUS, before WiFi)", 
+             millis(), this->rx_pin_, this->tx_pin_);
     this->lock = xSemaphoreCreateBinary();
     xSemaphoreGive(this->lock);
     this->pendingUpdate = false;
     memcpy(&(this->sharedState), this->heatPump.getCurrentState(),
            sizeof(FujiFrame));
 
-    // Drive LIN transceiver NRST pin HIGH if configured
-    if (this->nrst_pin_ != -1) {
-        pinMode(this->nrst_pin_, OUTPUT);
-        digitalWrite(this->nrst_pin_, HIGH);
-        ESP_LOGD("fuji", "NRST pin %d set HIGH", this->nrst_pin_);
-    }
-
-    // Enable LIN transceiver
-    if (this->en_pin_ != -1) {
-        pinMode(this->en_pin_, OUTPUT);
-        digitalWrite(this->en_pin_, HIGH);
-        ESP_LOGD("fuji", "EN pin %d set HIGH", this->en_pin_);
-    }
-    delay(10);
+    // EN (Pin 2) and NRST (Pin 7) are hardwired to 5V - no GPIO control needed
 
     this->heatPump.connect(&Serial2, true, this->rx_pin_, this->tx_pin_);
+    
+    // EN (Pin 2) and NRST (Pin 7) are hardwired to 5V and do NOT need GPIO control
+    // They were previously controlled by GPIO25 and GPIO26, which caused unnecessary
+    // power dissipation and thermal issues. Simply tying them to 5V is the correct solution.
+    // See datasheet section 4.1.5 (Mode transition via EN pin) and 4.3.2 (Reset output)
+    
     ESP_LOGD("fuji", "starting task");
     xTaskCreatePinnedToCore(serialTask, "FujiTask", 10000, (void *)this,
-                            configMAX_PRIORITIES - 1, &(this->taskHandle), 1);
+                            2, &(this->taskHandle), 1);
+    ESP_LOGD("fuji", "setup complete - serialTask started at priority 2 on core 1");
 }
 
 void FujitsuClimate::on_shutdown() {
@@ -88,14 +90,9 @@ void FujitsuClimate::on_shutdown() {
         this->status_sensor_->publish_state("Shutting down...");
     }
 
-    // Disable LIN transceiver before OTA reboot so the UNIT sees
-    // SECONDARY go silent during the entire upload + reboot cycle.
-    // This allows the UNIT to de-register SECONDARY and accept a
-    // fresh login after the ESP comes back up.
-    if (this->en_pin_ != -1) {
-        digitalWrite(this->en_pin_, LOW);
-        ESP_LOGW("fuji", "SHUTDOWN: LIN transceiver disabled (EN pin %d LOW)", this->en_pin_);
-    }
+    // EN pin is hardwired to 5V, so we cannot disable the transceiver via GPIO
+    // The transceiver will remain in normal operation during OTA reboot.
+    // The AC unit will detect the secondary controller going silent and handle re-registration.
     if (this->taskHandle != nullptr) {
         vTaskDelete(this->taskHandle);
         this->taskHandle = nullptr;
