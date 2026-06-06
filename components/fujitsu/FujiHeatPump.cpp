@@ -167,47 +167,14 @@ void FujiHeatPump::sendPendingFrame()
     if (pendingFrame && (millis() - lastFrameReceived) > 50)
     {
         // Save TX bytes for echo comparison
-        byte txCopy[8];
-        memcpy(txCopy, writeBuf, 8);
-        
-        unsigned long txStart = millis();
         _serial->write(writeBuf, 8);
         _serial->flush();
-        unsigned long txEnd = millis();
         pendingFrame = false;
         updateFields = 0;
         
         // Track response for diagnostics
         responseSentCount++;
         responseSentMs = millis();
-
-        // Read echo into separate buffer and verify
-        byte echoBuf[8];
-        memset(echoBuf, 0, 8);
-        int echoBytes = _serial->readBytes(echoBuf, 8);
-        unsigned long echoEnd = millis();
-        
-        // Compare echo with what we sent
-        bool echoMatch = (echoBytes == 8);
-        if (echoMatch) {
-            for (int i = 0; i < 8; i++) {
-                if (echoBuf[i] != txCopy[i]) {
-                    echoMatch = false;
-                    break;
-                }
-            }
-        }
-        
-        lastEchoCount = echoBytes;
-        if (echoMatch) lastEchoMatch = true;
-        
-        // Log every 50th TX or if echo mismatch
-        if (!echoMatch || (responseSentCount % 50 == 1)) {
-            ESP_LOGW("fuji", "TX: sent=%02X %02X %02X %02X %02X %02X %02X %02X echo=%02X %02X %02X %02X %02X %02X %02X %02X echoBytes=%d match=%d txMs=%lu-%lu echoMs=%lu",
-                txCopy[0], txCopy[1], txCopy[2], txCopy[3], txCopy[4], txCopy[5], txCopy[6], txCopy[7],
-                echoBuf[0], echoBuf[1], echoBuf[2], echoBuf[3], echoBuf[4], echoBuf[5], echoBuf[6], echoBuf[7],
-                echoBytes, echoMatch ? 1 : 0, txStart, txEnd, echoEnd);
-        }
     }
     
     // Auto-login injection: send SECONDARY login after bus goes idle
@@ -234,7 +201,6 @@ void FujiHeatPump::sendPendingFrame()
         }
         _serial->write(writeBuf, 8);
         _serial->flush();
-        _serial->readBytes(writeBuf, 8);  // read back our own frame (echo verification)
     }
 }
 
