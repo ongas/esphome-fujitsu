@@ -232,14 +232,9 @@ void FujiHeatPump::sendPendingFrame()
         for (int i = 0; i < 8; i++) {
             writeBuf[i] ^= 0xFF;
         }
-        size_t written = _serial->write(writeBuf, 8);
+        _serial->write(writeBuf, 8);
         _serial->flush();
-        byte echoFrame[8] = {0};
-        int echoBytes = _serial->readBytes(echoFrame, 8);
-        bool echoOK = (echoBytes == 8) && (writeBuf[0] == echoFrame[0]) && (writeBuf[1] == echoFrame[1]);
-        
-        ESP_LOGW("fuji", ">>> AUTO-LOGIN #%lu TX=%u RX=%d echo=%s", 
-                 autoLoginCount, written, echoBytes, echoOK ? "OK" : "FAIL");
+        _serial->readBytes(writeBuf, 8);  // read back our own frame (echo verification)
     }
 }
 
