@@ -8,7 +8,13 @@ Huge thanks to [unreality](https://github.com/unreality/) and [jaroslawprzybylow
 ## Hardware:
 
 See [FujiHeatPump](https://github.com/unreality/FujiHeatPump)'s readme file, I use that exact circuit with a ESP32 development board.
-IMPORTANT: I connected the MCP2025 TX RX to the ESP32's Serial 2 line, I used the Serial 1 line for debugging.
+
+Current wiring note:
+- The LIN transceiver TX/RX are on the ESP32 Serial 2 line.
+- Serial 1 is reserved for debugging.
+- The 12V pull-up on pin 4 has been removed.
+- A 10k resistor now connects pin 2 to pin 8.
+- Pin 7 is wired to pin 2.
 
 ## ESPHome:
 
@@ -37,8 +43,6 @@ climate:
     name: "Fujitsu AC"
     tx_pin: 1      # TX pin for serial communication
     rx_pin: 3      # RX pin for serial communication
-    en_pin: 25     # Enable pin for TLE8457C transceiver
-    nrst_pin: 26   # Reset pin for TLE8457C transceiver
 ```
 
 ### Debug Logging (Optional)
@@ -49,8 +53,6 @@ climate:
     name: "Fujitsu AC"
     tx_pin: 1
     rx_pin: 3
-    en_pin: 25
-    nrst_pin: 26
     debug: true    # Enable frame logging: onOff, temperature, mode, fan
 ```
 
@@ -58,7 +60,7 @@ When `debug: true`, frame data is logged. When `debug: false` (default), debug l
 
 ## Default behaviour:
 
-* The LIN transceiver (TLE8457C) is connected to Serial 2 (GPIO 1/3)
+* The LIN transceiver (TLE8457C) is connected to Serial 2
 * The controller is registered as secondary controller, see `void FujitsuClimate::setup()` in `FujitsuClimate.cpp`
 * My AC works on 1 degree C step, 16-30 degree temperature range etc...
 see `void climate::ClimateTraits FujitsuClimate::traits()` in `FujitsuClimate.cpp` for more details,
@@ -76,14 +78,3 @@ The ESP32 registers as a SECONDARY controller (address 33) alongside an existing
 ## Write retry mechanism:
 
 When you change a setting in Home Assistant (temperature, mode, fan speed, etc.), the ESP holds the desired value in the UI for a 2-second grace period before checking whether the unit has accepted the change. If the unit hasn't confirmed the new value, it automatically retries up to 5 times (10 seconds total). This prevents the UI from "bouncing" back to the old value while the unit is processing the write.
-
-## Known issues:
-* Setting ECO mode from Home Assistant does not work, but receiving ECO mode change from the controller is fine
-
-## Planned work:
-* Make traits configurable through the yaml config file
-* Get this project merged into the main ESPHome repository
-
-## How to contirbute:
-* Use github issues to start a discussion
-* Create pull requests

@@ -42,7 +42,7 @@ void serialTask(void *pvParameters) {
                          i > 0 ? " " : "", p.src, p.dst, p.type, p.cP, p.count);
                 strncat(patterns, tmp, sizeof(patterns) - strlen(patterns) - 1);
             }
-            ESP_LOGW("fuji", "DIAG: frames=%u bytes_rx=%u delta=%u dst:P=%lu/S=%lu/O=%lu bound=%d probe=%lu@%lums resp=%lu@%lums echo=%d/match=%d patterns=[%s]",
+            ESP_LOGW("fuji", "DIAG: frames=%u bytes_rx=%u delta=%u dst:P=%lu/S=%lu/O=%lu bound=%d probe=%lu@%lums resp=%lu@%lums echo=%d/match=%d rx_bytes=%lu incomplete=%lu valid=%lu last_rx=%lums patterns=[%s]",
                      frameCount,
                      bytesReceived, bytesReceived - lastByteCount,
                      climate->heatPump.frameDestPrimary, climate->heatPump.frameDestSecondary, climate->heatPump.frameDestOther,
@@ -50,6 +50,7 @@ void serialTask(void *pvParameters) {
                      climate->heatPump.probeReceivedCount, climate->heatPump.probeReceivedMs,
                      climate->heatPump.responseSentCount, climate->heatPump.responseSentMs,
                      climate->heatPump.lastEchoCount, climate->heatPump.lastEchoMatch ? 1 : 0,
+                     climate->heatPump.rawRxBytesSeen, climate->heatPump.incompleteFrameCount, climate->heatPump.validFrameCount, climate->heatPump.lastRxByteMs,
                      patterns);
             lastByteCount = bytesReceived;
             lastDiag = millis();

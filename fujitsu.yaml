@@ -29,6 +29,7 @@ web_server:
 wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_password
+  use_address: 192.168.0.189
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
@@ -43,7 +44,5 @@ climate:
     name: "Fujitsu"
     rx_pin: 13
     tx_pin: 27
-    en_pin: 25
-    nrst_pin: 26
     status_sensor:
       name: "Fujitsu Connection Status"

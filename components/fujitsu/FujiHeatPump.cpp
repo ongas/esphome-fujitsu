@@ -167,14 +167,44 @@ void FujiHeatPump::sendPendingFrame()
     if (pendingFrame && (millis() - lastFrameReceived) > 50)
     {
         // Save TX bytes for echo comparison
+        byte txCopy[8];
+        memcpy(txCopy, writeBuf, 8);
+        
+        unsigned long txStart = millis();
         _serial->write(writeBuf, 8);
         _serial->flush();
+        unsigned long txEnd = millis();
         pendingFrame = false;
         updateFields = 0;
         
         // Track response for diagnostics
         responseSentCount++;
         responseSentMs = millis();
+
+        // Read echo into separate buffer and verify
+        byte echoBuf[8];
+        memset(echoBuf, 0, 8);
+        int echoBytes = _serial->readBytes(echoBuf, 8);
+        unsigned long echoEnd = millis();
+        
+        // Compare echo with what we sent
+        bool echoMatch = (echoBytes == 8);
+        if (echoMatch) {
+            for (int i = 0; i < 8; i++) {
+                if (echoBuf[i] != txCopy[i]) {
+                    echoMatch = false;
+                    break;
+                }
+            }
+        }
+        
+        lastEchoCount = echoBytes;
+        if (echoMatch) lastEchoMatch = true;
+        
+        // Log every 50th TX or if echo mismatch
+        if (!echoMatch || (responseSentCount % 50 == 1)) {
+            ESP_LOGW("fuji", "TX #%lu: echo_RX=%d match=%d time_ms=%lu", responseSentCount, echoBytes, echoMatch ? 1 : 0, echoEnd - txStart);
+        }
     }
     
     // Auto-login injection: send SECONDARY login after bus goes idle
@@ -199,8 +229,14 @@ void FujiHeatPump::sendPendingFrame()
         for (int i = 0; i < 8; i++) {
             writeBuf[i] ^= 0xFF;
         }
-        _serial->write(writeBuf, 8);
+        size_t written = _serial->write(writeBuf, 8);
         _serial->flush();
+        byte echoFrame[8] = {0};
+        int echoBytes = _serial->readBytes(echoFrame, 8);
+        bool echoOK = (echoBytes == 8) && (writeBuf[0] == echoFrame[0]) && (writeBuf[1] == echoFrame[1]);
+        
+        ESP_LOGW("fuji", ">>> AUTO-LOGIN #%lu TX=%u RX=%d echo=%s", 
+                 autoLoginCount, written, echoBytes, echoOK ? "OK" : "FAIL");
     }
 }
 
@@ -210,14 +246,20 @@ bool FujiHeatPump::waitForFrame()
 
     if (_serial->available())
     {
+        rawRxBytesSeen++;
+        lastRxByteMs = millis();
+        
         memset(readBuf, 0, 8);
         int bytesRead = _serial->readBytes(readBuf, 8);
 
         if (bytesRead < 8)
         {
             // skip incomplete frame
+            incompleteFrameCount++;
             return false;
         }
+        
+        validFrameCount++;
 
         for (int i = 0; i < 8; i++)
         {

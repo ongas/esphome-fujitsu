@@ -63,7 +63,7 @@ Caution: + should be connected to the positive pole of the external charger;
 # LIN Pins:
 - Pin1 Power Supply +12v AND 1 leg of 100nf cap AND positive electrolytic #1
 - Pin3 Power Supply -12v AND negative electrolytic #1 AND other leg of 100nf cap
-- Pin4 Bus AND 10kohm resistor -> +12v
+- Pin4 Bus AND **no 12V pull-up resistor**
 
 # Buck Converter:
 - AC +12v -> +12v In
@@ -82,7 +82,7 @@ Caution: + should be connected to the positive pole of the external charger;
 - Pin4 (BUS): LIN bus to AC unit
 - Pin5 (RxD): 3.3V logic from Firebeetle GPIO13
 - Pin6 (TxD): 3.3V logic to Firebeetle GPIO27
-- Pin7 (NRST): Leave unconnected (has internal pull-up to VCC, open-drain output for reset signaling)
+- Pin7 (NRST): Wired to Pin2 (EN)
 - Pin8 (VCC): Regulated 5V or 3.3V output (internal LDO - see variant marking)
   - Requires 1µF ceramic decoupling capacitor to GND
   - Supplies Firebeetle and peripherals up to 70mA

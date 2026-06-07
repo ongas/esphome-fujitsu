@@ -118,6 +118,11 @@ class FujiHeatPump {
     unsigned long probeReceivedCount = 0;
     unsigned long probeReceivedMs = 0;
     unsigned long responseSentCount = 0;
+    
+    // LOGIN diagnostic tracking
+    unsigned long lastLoginSentMs = 0;
+    bool loginJustSent = false;
+    int framesAfterLogin = 0;
     unsigned long responseSentMs = 0;
     int lastEchoCount = -1;  // -1 = no TX yet, 0-8 = echo bytes received
     bool lastEchoMatch = false;
@@ -127,8 +132,16 @@ class FujiHeatPump {
     int bootQuietCount = 0;   // probes to observe silently before responding
     int enPin = -1;           // LIN transceiver EN pin (enabled after frame sync)
     
-    // Enable/disable auto-login injection (disabled: unsolicited frames don't work)
-    bool autoLoginEnabled = false;
+    // Enable/disable auto-login injection
+    // CRITICAL: Must be true for SECONDARY mode - device needs to register itself with the A/C unit
+    // False (default) means device only responds to explicit probes from PRIMARY (read-only mode)
+    bool autoLoginEnabled = true;
+    
+    // Passive RX diagnostics (read-only counters for debugging LIN connectivity)
+    unsigned long rawRxBytesSeen = 0;      // total bytes read from UART (any size)
+    unsigned long incompleteFrameCount = 0; // frames with <8 bytes
+    unsigned long validFrameCount = 0;      // successfully decoded 8-byte frames
+    unsigned long lastRxByteMs = 0;         // timestamp of last raw byte received
 
     void connect(HardwareSerial *serial, bool secondary);
     void connect(HardwareSerial *serial, bool secondary, int rxPin, int txPin);
