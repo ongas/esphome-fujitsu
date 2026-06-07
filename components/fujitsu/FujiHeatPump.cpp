@@ -203,7 +203,7 @@ void FujiHeatPump::sendPendingFrame()
         
         // Log every 50th TX or if echo mismatch
         if (!echoMatch || (responseSentCount % 50 == 1)) {
-            ESP_LOGW("fuji", "TX #%lu: echo_RX=%d match=%d time_ms=%lu", responseSentCount, echoBytes, echoMatch ? 1 : 0, echoEnd - txStart);
+            ESP_LOGD("fuji", "TX #%lu: echo_RX=%d match=%d time_ms=%lu", responseSentCount, echoBytes, echoMatch ? 1 : 0, echoEnd - txStart);
         }
     }
     
@@ -306,7 +306,7 @@ bool FujiHeatPump::waitForFrame()
 
         // Log frames addressed to SECONDARY (33) or with unexpected destinations
         if (ff.messageDest == static_cast<byte>(FujiAddress::SECONDARY)) {
-            ESP_LOGW("fuji", "!!! PROBE FOR SECONDARY: src=%d type=%d cP=%d login=%d uM=%d raw=%02X %02X %02X %02X %02X %02X %02X %02X uptime=%lu",
+            ESP_LOGD("fuji", "!!! PROBE FOR SECONDARY: src=%d type=%d cP=%d login=%d uM=%d raw=%02X %02X %02X %02X %02X %02X %02X %02X uptime=%lu",
                 ff.messageSource, ff.messageType,
                 ff.controllerPresent, ff.loginBit, ff.updateMagic,
                 readBuf[0], readBuf[1], readBuf[2], readBuf[3], readBuf[4], readBuf[5], readBuf[6], readBuf[7],
@@ -350,7 +350,7 @@ bool FujiHeatPump::waitForFrame()
             if (!controllerIsPrimary) {
                 probeReceivedCount++;
                 probeReceivedMs = millis();
-                ESP_LOGW("fuji", "!!! FRAME FOR US at %lums: src=%d type=%d cP=%d uM=%d", 
+                ESP_LOGD("fuji", "!!! FRAME FOR US at %lums: src=%d type=%d cP=%d uM=%d", 
                     millis(), ff.messageSource, ff.messageType, ff.controllerPresent, ff.updateMagic);
             }
 

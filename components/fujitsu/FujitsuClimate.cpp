@@ -42,7 +42,7 @@ void serialTask(void *pvParameters) {
                          i > 0 ? " " : "", p.src, p.dst, p.type, p.cP, p.count);
                 strncat(patterns, tmp, sizeof(patterns) - strlen(patterns) - 1);
             }
-            ESP_LOGW("fuji", "DIAG: frames=%u bytes_rx=%u delta=%u dst:P=%lu/S=%lu/O=%lu bound=%d probe=%lu@%lums resp=%lu@%lums echo=%d/match=%d rx_bytes=%lu incomplete=%lu valid=%lu last_rx=%lums patterns=[%s]",
+            ESP_LOGD("fuji", "DIAG: frames=%u bytes_rx=%u delta=%u dst:P=%lu/S=%lu/O=%lu bound=%d probe=%lu@%lums resp=%lu@%lums echo=%d/match=%d rx_bytes=%lu incomplete=%lu valid=%lu last_rx=%lums patterns=[%s]",
                      frameCount,
                      bytesReceived, bytesReceived - lastByteCount,
                      climate->heatPump.frameDestPrimary, climate->heatPump.frameDestSecondary, climate->heatPump.frameDestOther,
