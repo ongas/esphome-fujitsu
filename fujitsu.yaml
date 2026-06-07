@@ -46,3 +46,8 @@ climate:
     tx_pin: 27
     status_sensor:
       name: "Fujitsu Connection Status"
+
+# Enable Bluetooth Low Energy (BLE) tracking
+esp32_ble_tracker:
+
+bluetooth_proxy:
